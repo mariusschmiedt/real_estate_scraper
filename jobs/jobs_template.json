@@ -1,0 +1,52 @@
+{
+  "immoscout": {
+    "apartement_rent": {
+      "url": "https://www.immobilienscout24.de/Suche/de/wohnung-mieten",
+      "enabled": true,
+      "country": "Germany",
+      "number_format": "Germany"
+    }
+  },
+  "kleinanzeigen": {
+    "apartement_buy": {
+      "url": "https://www.kleinanzeigen.de/s-stuttgart/eigentumswohnung/k0l9280",
+      "enabled": true,
+      "country": "Germany",
+      "number_format": "Germany"
+    }
+  },
+  "immoswp": {
+    "apartement_rent": {
+      "url": "https://immo.swp.de/suchergebnisse?l=Deutschland&r=0km&a=&t=apartment%3Arental%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "enabled": true,
+      "country": "Germany",
+      "number_format": "Germany"
+    },
+    "house_rent": {
+      "url": "https://immo.swp.de/suchergebnisse?l=Deutschland&r=0km&a=&t=house%3Arental%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "enabled": true,
+      "country": "Germany",
+      "number_format": "Germany"
+    },
+    "apartement_buy": {
+      "url": "https://immo.swp.de/suchergebnisse?l=Deutschland&r=0km&a=&t=apartment%3Asale%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "enabled": true,
+      "country": "Germany",
+      "number_format": "Germany"
+    },
+    "house_buy": {
+      "url": "https://immo.swp.de/suchergebnisse?l=Deutschland&r=0km&a=&t=house%3Asale%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "enabled": true,
+      "country": "Germany",
+      "number_format": "Germany"
+    }
+  },
+  "immowelt": {
+    "apartement_rent": {
+      "url": "https://www.immowelt.de/suche/stuttgart/wohnungen/mieten?d=true",
+      "enabled": true,
+      "country": "Germany",
+      "number_format": "United Kingdom"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "kleinanzeigen": {
+    "apartement_buy": {
+      "url": "https://www.kleinanzeigen.de/s-stuttgart/eigentumswohnung/k0l9280",
+      "enabled": true,
+      "country": "Germany",
+      "number_format": "Germany"
+    }
+  }
+}

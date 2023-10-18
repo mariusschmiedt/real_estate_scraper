@@ -1,0 +1,28 @@
+{
+    "listing_scheme": {
+        "id": "INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT",
+        "provider": "TEXT",
+        "url": "TEXT",
+        "provider_id": "TEXT",
+        "title": "TEXT",
+        "address_id": "INT(11)",
+        "address_detected": "TEXT",
+        "price": "TEXT",
+        "currency":  "TEXT",
+        "size": "TEXT",
+        "size_unit": "TEXT",
+        "rooms": "TEXT",
+        "price_per_space": "TEXT",
+        "type": "TEXT",
+        "in_db_since": "TEXT",
+        "active": "INT(11)"
+    },
+    "address_scheme": {
+        "id": "INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT",
+        "country": "TEXT",
+        "postalcode": "TEXT",
+        "state": "TEXT",
+        "city": "TEXT",
+        "district": "TEXT"
+    }
+}
