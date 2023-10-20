@@ -1,4 +1,4 @@
-from .immonet import provider as immonet
+from .immonet_not_done import provider as immonet
 from .immoscout import provider as immoscout
 from .immoswp import provider as immoswp
 from .immowelt import provider as immowelt

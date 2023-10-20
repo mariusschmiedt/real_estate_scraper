@@ -21,7 +21,7 @@ class Scraper():
         self.house_type = house_type
         # locale.setlocale(locale.LC_NUMERIC, self.languageId)
 
-        self.currencies = ['€', 'EURO', '\x82', 'â\x82¬', 'â¬', 'CHF', '$', 'Dollar', 'USD']
+        self.currency_replacements = ['€', 'EURO', '\x82', 'â\x82¬', 'â¬', 'CHF', '$', 'Dollar', 'USD', '/mo', '+']
         self.size_units = ['m²', 'm2', 'm^2', 'sqft', 'mÂ²']
         self.room_abr = ['Zimmer', 'Zi.', 'Zi']
 
@@ -121,7 +121,7 @@ class Scraper():
                             listing['currency'] = 'CHF'
                         if '$' in result or 'Dollar' in result or 'USD' in result :
                             listing['currency'] = 'USD'
-                        for cur in self.currencies:
+                        for cur in self.currency_replacements:
                             result = result.replace(cur, '').strip()
                         # listing[key] = self.stringToNumber(result, self.languageId)
                     if key == 'size':

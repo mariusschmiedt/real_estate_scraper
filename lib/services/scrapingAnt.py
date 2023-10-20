@@ -1,5 +1,5 @@
 from ..provider.immoscout import provider as immoScoutInfo
-from ..provider.immonet import provider as immoNetInfo
+from ..provider.immonet_not_done import provider as immoNetInfo
 from ..utils import getProviderConfig
 
 def needScrapingAnt(id):
