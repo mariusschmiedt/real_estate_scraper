@@ -18,11 +18,13 @@ for prov in provider_list:
     for job in joblist:
         if job["house_type"] is not None and job["table_name"] is not None and job["url"] is not None:
             start_time = time.time()
-            fredy = FredyRuntime(provider.config, provider.metaInformation, job["url"], job["house_type"], job["table_name"], job["country"], current_path)
+            fredy = FredyRuntime(provider.config, provider.metaInformation, job["url"], job["house_type"], job["table_name"], job["country"], current_path, update_prices=False)
             print('Initialisiere: ' + str(time.time() - start_time))
             urls = fredy._getPagination()
             print('gefundene urls: ' + str(len(urls)))
             for url in urls[0:maxPageNum]:
                 start_time = time.time()
                 fredy.exe(url)
+                if fredy.finishJob:
+                    break
                 print('scraping: ' + str(time.time() - start_time))

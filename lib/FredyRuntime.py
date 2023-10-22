@@ -8,23 +8,27 @@ from .services.getAddress import getAddress
 from .utils import getDatabaseScheme
 
 class FredyRuntime():
-    def __init__(self, providerConfig, metaConfig, url, house_type, table_name, country, base_path):
+    def __init__(self, providerConfig, metaConfig, url, house_type, table_name, country, base_path, update_prices=False):
         
         # initialize provider information
         self._providerConfig = providerConfig
         self._metaConfig = metaConfig
         self._providerConfig['search_url'] = url
         self._providerConfig['provider'] = self._metaConfig["id"]
-        # set housing type based on search url
+
+        self.update_prices = update_prices
         # set country based on search url
         self._country = country
-        self._base_path = base_path
         # get database scheme
+        self._base_path = base_path
         self._database_scheme = getDatabaseScheme(self._base_path)
         # create sql connection to listing table
         self.listing_sql = sqlConnection(table_name, self._base_path, self._database_scheme['listing_scheme'])
+        # set indices of listing table
         self.listing_sql.preProcessDbTables()
-        self.listing_sql.preProcessTableEntries()
+        # create instance to write listings to database
+        self.list_write = writeListing(self.listing_sql, update_prices)
+        self.finishJob = self.list_write.finish
         # create sql connection to address table
         self.address_sql = sqlConnection('address_table', self._base_path, self._database_scheme['address_scheme'])
         self.address_sql.preProcessDbTables()
@@ -47,6 +51,10 @@ class FredyRuntime():
         
         # save listings to database
         self._saveListing(listings)
+
+        if self.update_prices:
+            # check every active listing if it is still available
+            self.listing_sql.getActiveTableElements()
 
     def _getPagination(self):
         mutateUrl = queryStringMutator(self._providerConfig['sortByDateParam'], self._providerConfig['provider'], self._metaConfig['paginate'])
@@ -87,7 +95,9 @@ class FredyRuntime():
 
     def _saveListing(self, listings):
         self.listing_sql.openMySQL()
-        list_write = writeListing(self.listing_sql)
         for listing in listings:
-            list_write.writeListingToDb(listing)
+            self.list_write.writeListingToDb(listing)
+            self.finishJob = self.list_write.finish
+            if self.finishJob:
+                break
         self.listing_sql.closeMySQL()

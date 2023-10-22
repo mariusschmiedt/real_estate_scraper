@@ -1,6 +1,6 @@
 
 import re
-from ..utils import isOneOf
+from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit
 
 class provider():
     def __init__(self):
@@ -49,6 +49,16 @@ class provider():
 
     def normalize(self, o):
         url = "https://www.immobilienscout24.de" + o["url"].replace(o["url"][0:o["url"].index("/expose")+1], '')
+
+
+        o['currency'] = getCurrency(o['price'])
+        o['price'] = replaceCurrency(o['price'])
+
+        o['size_unit'] = getSizeUnit(o['size'])
+        o['size'] = replaceSizeUnit(o['size'])
+
+        o['rooms'] = replaceRoomAbbr(o['rooms'])
+
 
         o['price'] = self.numConvert(o['price'])
         o['size'] = self.numConvert(o['size'])

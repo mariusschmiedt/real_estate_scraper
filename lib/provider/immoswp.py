@@ -1,4 +1,4 @@
-from ..utils import isOneOf
+from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit
 
 class provider():
     def __init__(self):
@@ -39,6 +39,14 @@ class provider():
     def normalize(self, o):
         provider_id = o["provider_id"].replace(o["provider_id"][0:o["provider_id"].index("-")+1], '')
 
+
+        o['currency'] = getCurrency(o['price'])
+        o['price'] = replaceCurrency(o['price'])
+
+        o['size_unit'] = getSizeUnit(o['size'])
+        o['size'] = replaceSizeUnit(o['size'])
+
+        o['rooms'] = replaceRoomAbbr(o['rooms'])
 
         o['provider_id'] = provider_id
         o['price'] = self.numConvert(o['price'])

@@ -1,6 +1,6 @@
 
 import re
-from ..utils import isOneOf
+from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit
 
 class provider():
     def __init__(self):
@@ -9,11 +9,11 @@ class provider():
         self.config = {
             "search_url": None,
             "crawlContainer": 'li.ListItem*',
-            "sortByDateParam": 'sortierung:neueste',
+            "sortByDateParam": '"sort":{"value":"days"}}',
             "crawlFields": {
                 "provider_id": 'article.StyledPropertyCard*@id',
                 "price": 'span.PropertyCardWrapper*',
-                "size": 'ul.PropertyCardWrapper:3c:2t',
+                "size": 'ul.StyledPropertyCardHomeDetailsList*:raw',
                 "rooms": '',
                 "title": '',
                 "url": 'a.property-card-link@href',
@@ -29,7 +29,7 @@ class provider():
             "name": 'Zillow',
             "baseUrl": 'https://www.zillow.com',
             "id": 'kleinanzeigen',
-            "paginate": 'seite:',
+            "paginate": ' "pagination":{"currentPage":}',
         }
 
     def init(self, sourceConfig, blacklist=None):
@@ -49,6 +49,37 @@ class provider():
         return nullVal
 
     def normalize(self, o):
+        # remove html tags from size
+        size = re.sub('\<(.*?)>', ' ', o['size']).strip()
+        # split the size string
+        size_split = [i for i in size.split(' ') if i != '']
+        # find the position of the size unit to get the apartement size (or pick the numeric value wiht more than three digits)
+        try:
+            o['size'] = size_split[size_split.index('sqft')-1]
+        except:
+            for s in size_split:
+                num = False
+                try:
+                    int(s)
+                    num = True
+                except:
+                    pass
+                if num and len(s) >= 3:
+                    o['size'] = s
+        
+        # find the number of bedrooms
+        try:
+            o['rooms'] = size_split[size_split.index('bds')-1]
+        except:
+            o['size'] = '1'
+
+        o['currency'] = getCurrency(o['price'])
+        o['price'] = replaceCurrency(o['price'])
+
+        o['size_unit'] = getSizeUnit(size)
+        o['size'] = replaceSizeUnit(o['size'])
+
+        o['rooms'] = replaceRoomAbbr(o['rooms'])
 
         o['price'] = self.numConvert(o['price'])
         o['size'] = self.numConvert(o['size'])

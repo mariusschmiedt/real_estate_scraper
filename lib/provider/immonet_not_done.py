@@ -1,4 +1,4 @@
-from ..utils import isOneOf
+from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit
 
 class provider():
     def __init__(self):
@@ -35,25 +35,24 @@ class provider():
 
     def normalize(self, o):
         provider_id = o["provider_id"].replace(o["provider_id"][0:o["provider_id"].index("/")]+1, '')
-        size = 'N/A m²'
-        if o['size'] != '':
-            size = o['size'].replace('Wohnfläche ', '')
-        price = '--- €'
-        if o['price'] != '':
-            price =  o['price'].replace('Kaufpreis ', '')
-        address_detected = 'No address available'
-        if o['address_detected'] != '':
-            address_detected = o['address_detected'].split(' • ')[-2]
-        title = 'No title available'
-        if o['title'] != '':
-            title = o['title']
+
         url = o["provider_id"]
 
+        o['currency'] = getCurrency(o['price'])
+        o['price'] = replaceCurrency(o['price'])
+
+        o['size_unit'] = getSizeUnit(o['size'])
+        o['size'] = replaceSizeUnit(o['size'])
+
+        o['rooms'] = replaceRoomAbbr(o['rooms'])
+
+        o['price'] = self.numConvert(o['price'])
+        o['size'] = self.numConvert(o['size'])
+        o['rooms'] = self.numConvert(o['rooms'])
+
+
+
         o['provider_id'] = provider_id
-        o['address_detected'] = address_detected
-        o['price'] = price
-        o['size'] = size
-        o['title'] = title
         o['url'] = url
         return o
 
@@ -61,3 +60,15 @@ class provider():
         titleNotBlacklisted = not isOneOf(o['title'], self.appliedBlackList)
         descNotBlacklisted = not isOneOf(o['description'], self.appliedBlackList)
         return titleNotBlacklisted and descNotBlacklisted
+    
+    def numConvert(self, value):
+        comma_count = value.count(',')
+        dot_count = value.count('.')
+
+        if comma_count == 1 and dot_count == 0:
+            value = value.replace(',', '.')
+        elif dot_count == 1 and comma_count == 1:
+            value = value.replace('.', '').replace(',', '.')
+        elif dot_count == 1 and comma_count == 0:
+            value = value.replace('.', '')
+        return value

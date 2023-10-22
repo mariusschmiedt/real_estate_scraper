@@ -11,7 +11,6 @@ class sqlConnection():
         self.cur = None
         
         self.table_name = table_name
-
         self.currencies = ['€', 'EURO', 'CHF', '$', 'Dollar', 'USD']
         self.table_columns = table_columns
         
@@ -51,14 +50,28 @@ class sqlConnection():
         
         self.closeMySQL()
 
-    def preProcessTableEntries(self):
-        # select offers
+    def getActiveTableElements(self, minimum_listings_age=10):
+        # select listings
         self.openMySQL()
-        offers = pd.read_sql('SELECT * FROM ' + self.table_name, con=self.mydb)
+        listings = pd.read_sql('SELECT * FROM ' + self.table_name, con=self.mydb)
 
-        ids = offers['id'].tolist()
-        urls = offers['url'].tolist()
+        # get only active listings
+        active_listings = listings[listings['active'] == 1]
+        # current date
+        curDateStr = str(datetime.datetime.now().strftime("%Y-%m-%d"))
+        curDate = datetime.datetime.strptime(curDateStr, "%Y-%m-%d")
+        
+        # current date minus x days
+        compDate = curDate - datetime.timedelta(days=minimum_listings_age)
 
+        # find listings older than
+        active_listings = listings[pd.to_datetime(listings['in_db_since']) < compDate]
+
+        # get urls of active and older listings
+        ids = active_listings['id'].tolist()
+        urls = active_listings['url'].tolist()
+
+        # check if listing is still available
         for idx in range(len(urls)):
             url = urls[idx]
             response = requests.get(url)
