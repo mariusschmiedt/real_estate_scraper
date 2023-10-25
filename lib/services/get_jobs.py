@@ -6,21 +6,26 @@ def getJobs(jobs, provider_name):
         provider_types = jobs[provider_name][job]
         house_type = None
         table_name = None
+        offer_type = None
         country = None
         url = None
         number_format = None
         if job == 'apartement_rent':
             house_type = 'apartement'
             table_name = 'rent_homes'
+            offer_type = 'rent'
         if job == 'house_rent':
             house_type = 'house'
             table_name = 'rent_homes'
+            offer_type = 'rent'
         if job == 'apartement_buy':
             house_type = 'apartement'
             table_name = 'buy_homes'
+            offer_type = 'buy'
         if job == 'house_buy':
             house_type = 'house'
             table_name = 'buy_homes'
+            offer_type = 'buy'
         if 'url' in provider_types.keys():
             url = provider_types['url']
         if 'country' in provider_types.keys():
@@ -32,7 +37,8 @@ def getJobs(jobs, provider_name):
             "house_type": house_type,
             "table_name": table_name,
             "country": country,
-            "number_format": number_format
+            "number_format": number_format,
+            "offer_type": offer_type
         }
         job_list.append(job_dict)
     return job_list

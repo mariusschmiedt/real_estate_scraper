@@ -1,6 +1,6 @@
 
 import re
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit
+from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
 
 class provider():
     def __init__(self):
@@ -28,7 +28,7 @@ class provider():
         self.metaInformation = {
             "name": 'Zillow',
             "baseUrl": 'https://www.zillow.com',
-            "id": 'kleinanzeigen',
+            "id": 'zillow',
             "paginate": ' "pagination":{"currentPage":}',
         }
 
@@ -49,6 +49,13 @@ class provider():
         return nullVal
 
     def normalize(self, o):
+        
+        o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
+
+        if ',' in o['address_detected']:
+            o['city'] = o['address_detected'].split(',')[-2].strip()
+            o['district'] = o['address_detected'].split(',')[-2].strip()
+        
         # remove html tags from size
         size = re.sub('\<(.*?)>', ' ', o['size']).strip()
         # split the size string
@@ -71,7 +78,7 @@ class provider():
         try:
             o['rooms'] = size_split[size_split.index('bds')-1]
         except:
-            o['size'] = '1'
+            o['rooms'] = '1'
 
         o['currency'] = getCurrency(o['price'])
         o['price'] = replaceCurrency(o['price'])

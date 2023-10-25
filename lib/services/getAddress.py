@@ -13,38 +13,23 @@ def getAddress(listing, country, sql):
     state = ''
     city = ''
     district = ''
-    found_country = ''
 
-    # split founx address
-    address_split = address.split(' ')
-    # find post code in address
-    for add in address_split:
-        # check if address part is number
-        num = False
-        try:
-            int(add)
-            num = True
-        except:
-            pass
-        # if number has more than 4 digits it is propably a postalcode
-        if len(add) >= 4 and num:
-            postalcode = add
-        # check if the country is part of the address
-        if add.lower() == country.lower():
-            found_country = country
-        # if the address part is not a number and not the country it is probably the city or district
-        if not num and add.lower() != country.lower():
-            if add.startswith('(') or add.endswith(')'):
-                district = add.replace('(', '').replace(')', '')
-            else:
-                city = add
+    if 'city' in listing:
+        city = listing['city']
+    if 'district' in listing:
+        district = listing['district']
+    if 'postalcode' in listing:
+        postalcode = listing['postalcode']
     
     # if a postcode have been found define new address string e.g. 70597, Germany
-    if postalcode != '':
+    if postalcode != '' and city == '':
         address = postalcode + ', ' + country
-    
+    if postalcode == '' and city != '':
+        address = city + ', ' + country
+    if postalcode != '' and city != '':
+        address = postalcode + ' ' + city + ', ' + country
     # if the country was not in the found address string add it to the existing one e.g. 70597 Stuttgart, Germany
-    if found_country == '':
+    if country.lower() not in address.lower():
         address = address + ', ' + country
 
     # initialize the address id of the address_table
@@ -61,9 +46,13 @@ def getAddress(listing, country, sql):
             district = found_state[3].strip()
 
     # if the address has not been found but the city and district is expected to be known from the address string
-    if address_id == '' and city != '' and country != '' and district != '':
-        found_states = sql.querySql("SELECT id, state, postalcode FROM address_table WHERE city='" + city + "' AND country='" + country + "' AND district='" + district + "'")
-        if len(found_states) > 0:
+    if address_id == '' and city != '' and country != '':
+        found_states = []
+        if district != '':
+            found_states = sql.querySql("SELECT id, state, postalcode FROM address_table WHERE city='" + city + "' AND country='" + country + "' AND district='" + district + "'")
+        else:
+            found_states = sql.querySql("SELECT id, state, postalcode FROM address_table WHERE city='" + city + "' AND country='" + country + "'")
+        if len(found_states) == 1:
             found_state = found_states[0]
             address_id = str(found_state[0])
             state = found_state[1].strip()

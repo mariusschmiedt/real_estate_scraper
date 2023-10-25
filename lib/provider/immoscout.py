@@ -1,6 +1,6 @@
 
 import re
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit
+from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
 
 class provider():
     def __init__(self):
@@ -50,7 +50,19 @@ class provider():
     def normalize(self, o):
         url = "https://www.immobilienscout24.de" + o["url"].replace(o["url"][0:o["url"].index("/expose")+1], '')
 
+        o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
 
+        if ',' in o['address_detected']:
+            o['city'] = o['address_detected'].split(',')[-1]
+            o['district'] = o['address_detected'].split(',')[-2]
+        else:
+            o['city'] = o['address_detected']
+
+        if 'city' in o:
+            if 'Kreis' in o['city'] and 'district' in o:
+                o['city'] = o['district']
+                o['district'] = ''
+        
         o['currency'] = getCurrency(o['price'])
         o['price'] = replaceCurrency(o['price'])
 

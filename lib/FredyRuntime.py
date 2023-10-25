@@ -67,7 +67,7 @@ class FredyRuntime():
         if self.ant_required:
             u = transformUrlForScrapingAnt(url, id)
         self.scraper.scrape(u, get_paginate = True)
-        maxPageNum = self.scraper.maxPageNum
+        maxPageNum = self.scraper.maxPageNum            
         urls = list()
         for i in range(1, int(maxPageNum)+1):
             u = mutateUrl.paginationModifier(url, str(i))

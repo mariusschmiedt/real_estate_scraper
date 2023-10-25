@@ -10,6 +10,9 @@ class queryStringMutator():
     def urlSortParamModifier(self, url):
         if self.sortByDateParam == None:
             return url
+        
+        if self.sortByDateParam == '':
+            return url
 
         # parse url into its parts
         url_parts = urlparse.urlparse(url)
@@ -49,7 +52,8 @@ class queryStringMutator():
         return url
     
     def paginationModifier(self, url, page):
-        url + self.paginateParam + page
+        if self.provider == 'comparis':
+            page = str(int(page) - 1)
         if self.provider == 'kleinanzeigen':
             # get url components
             url_parts = urlparse.urlparse(url)
@@ -70,4 +74,6 @@ class queryStringMutator():
             url_parts[idx] = new_path
             # unparse list to new url
             url = urlparse.urlunparse(list(url_parts))
+        else:
+            url = url + self.paginateParam + page
         return url

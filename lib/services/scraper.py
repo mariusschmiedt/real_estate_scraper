@@ -2,12 +2,13 @@ import re
 import requests
 import math
 import datetime
+import json
 from bs4 import BeautifulSoup
 import html5lib
 import locale
 from scrapingant_client import ScrapingAntClient
 import random
-from ..utils import getProviderConfig, getLanguageId, getDatabaseScheme
+from ..utils import getProviderConfig, getLanguageId, getDatabaseScheme, replaceChrs
 from .requestDriver import makeDriver
 
 class Scraper():
@@ -57,7 +58,21 @@ class Scraper():
         tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw = self.getAttr(self.providerConfig['crawlContainer'])
         containers = self.getContent(soup, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw, get_container=True)
         
+        
+
         if get_paginate:
+            found_listings = 0
+            if 'num_listings' in self.providerConfig:
+                if type(containers) == dict:
+                    found_listings = int(self.getJsonResult(containers, self.providerConfig['num_listings']))
+                else:
+                    tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw = self.getAttr(self.providerConfig['num_listings'])
+                    found_listings_num = self.stringToNumber(self.getContent(soup, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw), self.languageId)
+                    found_listings_num = re.sub('[^0-9]','', found_listings_num)
+                    found_listings = int(found_listings_num)
+            
+            if type(containers) == dict:
+                containers = self.getJsonResult(containers, self.providerConfig['jsonContainer'])    
             
             listings_per_page = len(containers)
             if 'listings_per_page' in self.providerConfig:
@@ -66,9 +81,6 @@ class Scraper():
                         listings_per_page = int(self.providerConfig['listings_per_page'])
                     except:
                         raise Exception('Parameter "listings_per_page" of config ' + self.providerConfig['provider'] + ' must be a number')
-            tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw = self.getAttr(self.providerConfig['num_listings'])
-            found_listings_num = self.stringToNumber(self.getContent(soup, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw), self.languageId)
-            found_listings = int(found_listings_num)
             if 'maxPageResults' in self.providerConfig:
                 if self.providerConfig['maxPageResults'] != '':
                     try:
@@ -90,15 +102,22 @@ class Scraper():
 
             listing['provider'] = self.providerConfig['provider']
             listing['type'] = self.house_type
-            listing['in_db_since'] = str(datetime.datetime.now().strftime("%Y-%m-%d"))
             listing['active'] = '1'
 
             for key in self.providerConfig['crawlFields'].keys():
-                tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw = self.getAttr(self.providerConfig['crawlFields'][key])
-                result = self.getContent(con, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw)
+                result = None
+                if type(con) == dict:
+                    if self.providerConfig['crawlFields'][key] in con:
+                        result = con[self.providerConfig['crawlFields'][key]]
+                else:
+                    tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw = self.getAttr(self.providerConfig['crawlFields'][key])
+                    result = self.getContent(con, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw)
                 if result is not None:
                     listing[key] = replaceChrs(result)
             
+            if listing['in_db_since'] == '':
+                listing['in_db_since'] = str(datetime.datetime.now().strftime("%Y-%m-%d"))
+
             try:
                 listing['price_per_space'] = str(round((float(listing['price']) / float(listing['size'])), 2))
             except:
@@ -202,7 +221,19 @@ class Scraper():
                     result = str(result)
                 else:
                     result = result.text.replace('\n', '').strip()
+        if attr_val_des is not None and tag is not None:
+            if 'json' in attr_val_des and tag == 'script':
+                result = json.loads(result[child].text)
         return result
+    
+    def getJsonResult(self, container, value):
+        keys = value.split('.')
+        for key in keys:
+            if key in container:
+                container = container[key]
+            else:
+                raise Exception('Dictionary key "' + key + '" is not part of the json result of ' + self.providerConfig['provider'] + '.')
+        return container
     
     def stringToNumber(self, value, languageId):
         if languageId.startswith('de') or languageId.startswith('es') or languageId.startswith('it') or languageId.startswith('fr'):

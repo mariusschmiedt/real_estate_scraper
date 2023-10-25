@@ -1,4 +1,4 @@
-
+import re
 from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
 
 class provider():
@@ -7,28 +7,28 @@ class provider():
 
         self.config = {
             "search_url": None,
-            "crawlContainer": 'li.ad-listitem*',
-            "sortByDateParam": 'sortierung:neueste',
+            "crawlContainer": 'div.ResultList_listItem*',
+            "sortByDateParam": 'o=dateCreated-desc',
             "crawlFields": {
-                "provider_id": 'article.aditem@data-adid',
-                "price": 'p.aditem-main--middle--price-shipping--price',
-                "size": 'span.simpletag:1c',
-                "rooms": 'span.simpletag:2c',
-                "title": 'a.ellipsis',
-                "url": 'a.ellipsis@href',
-                "address_detected": 'div.aditem-main--top--left',
+                "provider_id": '',
+                "price": 'span.HgListingCard_price*',
+                "size": 'div.HgListingRoomsLivingSpace_roomsLivingSpace*:raw',
+                "rooms": '',
+                "title": 'p.HgListingDescription_title*:t1',
+                "url": 'a.HgCardElevated_link*@href',
+                "address_detected": 'address',
             },
-            "num_listings": 'span.breadcrump-summary:5s',
-            "listings_per_page": '25',
+            "num_listings": 'span.ResultsNumber_results_zTgsG:1s',
+            # "listings_per_page": '25',
             "normalize": self.normalize,
             "filter": self.applyBlacklist,
         }
 
         self.metaInformation = {
-            "name": 'Kleinanzeigen',
-            "baseUrl": 'https://www.kleinanzeigen.de/',
-            "id": 'kleinanzeigen',
-            "paginate": 'seite:',
+            "name": 'Homegate',
+            "baseUrl": 'http://homegate.ch',
+            "id": 'homegate',
+            "paginate": 'ep=',
         }
 
     def init(self, sourceConfig, blacklist=None):
@@ -52,11 +52,32 @@ class provider():
         o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
 
         if o['postalcode'] != '':
-            o['city'] = o['address_detected'].replace(o['postalcode'], '').strip()
-            o['district'] = o['city']
+            rem_address = o['address_detected'].replace(o['postalcode'], '').strip()
+            if ',' in rem_address:
+                o['city'] = rem_address.split(',')[1].strip()
+            else:
+                o['city'] = rem_address
         
-        url = "https://www.kleinanzeigen.de/" + o["url"]
+        size_tag = re.sub('\<(.*?)>', ', ', o['size']).strip()
 
+        size_split = [i.strip() for i in size_tag.split(', ') if i != '' and i != ',']
+        # find the number of bedrooms
+        for p in range(1, len(size_split)):
+            num = False
+            try:
+                int(size_split[p-1])
+                num = True
+            except:
+                pass
+            if num:
+                if 'Zimmer' in size_split[p-1]:
+                    o['rooms'] = size_split[p-1]
+                else:
+                    o['size'] = size_split[p-1]
+        
+        url = "https://www.homegate.ch" + o["url"]
+
+        o['provider_id'] = o["url"].split('/')[-1]
 
         o['currency'] = getCurrency(o['price'])
         o['price'] = replaceCurrency(o['price'])
@@ -83,13 +104,13 @@ class provider():
         return not isOneOf(o['title'], self.appliedBlackList)
     
     def numConvert(self, value):
+        value = value.replace(' ', '')
+        value = value.replace('´', '')
+        value = value.replace("'", '')
+
         comma_count = value.count(',')
         dot_count = value.count('.')
 
         if comma_count == 1 and dot_count == 0:
             value = value.replace(',', '.')
-        elif dot_count == 1 and comma_count == 1:
-            value = value.replace('.', '').replace(',', '.')
-        elif dot_count == 1 and comma_count == 0:
-            value = value.replace('.', '')
         return value

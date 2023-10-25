@@ -1,4 +1,4 @@
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit
+from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
 
 class provider():
     def __init__(self):
@@ -37,6 +37,18 @@ class provider():
         self.appliedBlackList = blacklist
 
     def normalize(self, o):
+        
+        o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
+
+        address = o['address_detected']
+        if ',' in o['address_detected']:
+            address = o['address_detected'].split(',')[1]
+       
+
+        if o['postalcode'] != "":
+            city = address.replace(o['postalcode'], '').strip()
+            o['city'] = city
+        
         provider_id = o["provider_id"].replace(o["provider_id"][0:o["provider_id"].index("-")+1], '')
 
 

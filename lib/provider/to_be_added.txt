@@ -1,6 +1,9 @@
-homegate.ch
-immoscout24.ch
-comparis.ch
-home.ch
 immostreet.ch
 newhome.ch
+
+test:
+zillow
+homegate
+immoscout_ch
+comparis
+home.ch
