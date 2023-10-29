@@ -55,8 +55,8 @@ class Scraper():
             page_content = response.text
         
         soup = BeautifulSoup(page_content,'html5lib')
-        tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw = self.getAttr(self.providerConfig['crawlContainer'])
-        containers = self.getContent(soup, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw, get_container=True)
+        attr_dict = self.getAttr(self.providerConfig['crawlContainer'])
+        containers = self.getContent(soup, attr_dict, get_container=True)
         
         
 
@@ -66,8 +66,8 @@ class Scraper():
                 if type(containers) == dict:
                     found_listings = int(self.getJsonResult(containers, self.providerConfig['num_listings']))
                 else:
-                    tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw = self.getAttr(self.providerConfig['num_listings'])
-                    found_listings_num = self.stringToNumber(self.getContent(soup, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw), self.languageId)
+                    attr_dict = self.getAttr(self.providerConfig['num_listings'])
+                    found_listings_num = self.stringToNumber(self.getContent(soup, attr_dict), self.languageId)
                     found_listings_num = re.sub('[^0-9]','', found_listings_num)
                     found_listings = int(found_listings_num)
             
@@ -87,6 +87,7 @@ class Scraper():
                         found_listings = min(int(self.providerConfig['maxPageResults']), found_listings)
                     except:
                         raise Exception('Parameter "maxPageResults" of config ' + self.providerConfig['provider'] + ' must be a number')
+            self.listings_per_page = listings_per_page
             self.maxPageNum  = str(math.ceil(int(found_listings) / int(listings_per_page)))
         else:
             return self.readListings(containers)
@@ -110,8 +111,8 @@ class Scraper():
                     if self.providerConfig['crawlFields'][key] in con:
                         result = con[self.providerConfig['crawlFields'][key]]
                 else:
-                    tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw = self.getAttr(self.providerConfig['crawlFields'][key])
-                    result = self.getContent(con, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw)
+                    attr_dict = self.getAttr(self.providerConfig['crawlFields'][key])
+                    result = self.getContent(con, attr_dict)
                 if result is not None:
                     listing[key] = replaceChrs(result)
             
@@ -137,9 +138,9 @@ class Scraper():
         class_name_start = False
         raw = False
         if '@' in value:
-            class_name = value.split('@')[0]
-            if class_name == '':
-                class_name = None
+            tag = value.split('@')[0]
+            if tag == '':
+                tag = None
             attr_name = value.split('@')[1]
             if '=' in attr_name:
                 attr_name_split = attr_name.split('=')
@@ -148,8 +149,8 @@ class Scraper():
         
         if '.' in value:
             value_split = value.split('.')
-            if class_name is not None:
-                value_split = class_name.split('.')
+            if tag is not None:
+                value_split = tag.split('.')
             tag = value_split[0]
             class_name = ' '.join([value_split[v] for v in range(1, len(value_split))])
         
@@ -179,51 +180,76 @@ class Scraper():
         if '@' not in value and '=' not in value and '.' not in value and ':' not in value and '*' not in value:
             tag = value
         
-        return tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw
+        attr_dict = {
+            "tag": tag,
+            "class_name": class_name,
+            "attr_name": attr_name,
+            "attr_val_des": attr_val_des,
+            "class_name_start": class_name_start,
+            "attr_val_des_start": attr_val_des_start,
+            "child": child,
+            "split": split,
+            "tag_split": tag_split,
+            "raw": raw
+        }
+
+        return attr_dict
     
-    def getContent(self, container, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw, get_container = False):
+    def getContent(self, container, attr_dict, get_container = False):
         result = None
-        if child is None:
-            child = 0
-        if tag is not None:
-            tag_find = container.find_all(tag, {"class": class_name})
-            if class_name_start:
-                tag_find = container.find_all(tag, {"class": lambda v: v and v.startswith(class_name)})
+        if attr_dict['child'] is None:
+            attr_dict['child'] = 0
+        if attr_dict['tag'] is not None:
+            tag_find = container.find_all(attr_dict['tag'], {"class": attr_dict['class_name']})
+            if attr_dict['class_name_start']:
+                tag_find = container.find_all(attr_dict['tag'], {"class": lambda v: v and v.startswith(attr_dict['class_name'])})
             result = [r for r in tag_find]
-            if attr_name is not None:
-                result = [r for r in result if attr_name in r.attrs]
+            if attr_dict['attr_name'] is not None:
+                result = [r for r in result if attr_dict['attr_name'] in r.attrs]
             if len(result) == 0:
                 result = None
         if not get_container:
             get_tag_content = False
-            if attr_name is not None:
-                if attr_val_des is not None:
-                    result = [r for r in result if r.attrs[attr_name] == attr_val_des]
-                    if attr_val_des_start:
-                        result = [r for r in result if r.attrs[attr_name].startswith(attr_val_des)]
+            if attr_dict['attr_name'] is not None:
+                if attr_dict['attr_val_des'] is not None:
+                    result = [r for r in result if r.attrs[attr_dict['attr_name']] == attr_dict['attr_val_des']]
+                    if attr_dict['attr_val_des_start']:
+                        result = [r for r in result if r.attrs[attr_dict['attr_name']].startswith(attr_dict['attr_val_des'])]
                     get_tag_content = True
                 else:
-                    if tag is not None and result is not None:
-                        result = result[child].get(attr_name)
+                    if attr_dict['tag'] is not None and result is not None:
+                        result = result[attr_dict['child']].get(attr_dict['attr_name'])
                     else:
-                        result = container.get(attr_name)
-            elif attr_name is None and result is not None:
+                        result = container.get(attr_dict['attr_name'])
+            elif attr_dict['attr_name'] is None and result is not None:
                 get_tag_content = True
             if get_tag_content:
-                result = result[child]
-                if split is not None and not raw:
+                result = result[attr_dict['child']]
+                if attr_dict['split'] is not None and not attr_dict['raw']:
                     result = result.text.replace('\n', '').strip()
-                    result = result.split(' ')[split]
-                elif tag_split is not None and not raw:
-                    result = result.find_all()[tag_split]
+                    result = [i for i in result.split(' ') if i != ''][attr_dict['split']]
+                elif attr_dict['tag_split'] is not None and not attr_dict['raw']:
+                    result = result.find_all()[attr_dict['tag_split']]
                     result = result.text.replace('\n', '').strip()
-                elif raw:
+                elif attr_dict['raw']:
                     result = str(result)
                 else:
                     result = result.text.replace('\n', '').strip()
-        if attr_val_des is not None and tag is not None:
-            if 'json' in attr_val_des and tag == 'script':
-                result = json.loads(result[child].text)
+                    result = ' '.join([i for i in result.split(' ') if i != ''])
+        else:
+            if attr_dict['attr_val_des'] is not None and attr_dict['tag'] is not None:
+                if 'json' in attr_dict['attr_val_des'] and attr_dict['tag'] == 'script':
+                    result = json.loads(result[attr_dict['child']].text)
+            else:
+                if 'top_field' in self.providerConfig:
+                    attr_dict_top = self.getAttr(self.providerConfig['top_field'])
+                    result1 = result
+                    result = list()
+                    for con in result1:
+                        tag_find = con.find_all(attr_dict_top['tag'], {"class": attr_dict_top['class_name']})
+                        top_find = [r for r in tag_find]
+                        if len(top_find) == 0:
+                            result.append(con)
         return result
     
     def getJsonResult(self, container, value):

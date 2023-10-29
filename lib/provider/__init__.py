@@ -6,6 +6,12 @@ from .kleinanzeigen import provider as kleinanzeigen
 from .immoscoutch import provider as immoscout_ch
 from .zillow import provider as zillow
 from .homegate import provider as homegate
+from .comparis import provider as comparis
+from .homech import provider as homech
+from .findmyhome_at import provider as findmyhome_at
+from .immoscout_at import provider as immoscout_at
+from .derstandard_at import provider as derstandard_at
+from .flatbee_at import provider as flatbee_at
 
 def getProvider(provider):
     if provider == 'immoswp':
@@ -24,3 +30,15 @@ def getProvider(provider):
         return zillow()
     if provider == 'homegate':
         return homegate()
+    if provider == 'comparis':
+        return comparis()
+    if provider == 'homech':
+        return homech()
+    if provider == 'findmyhome_at':
+        return findmyhome_at()
+    if provider == 'immoscout_at':
+        return immoscout_at()
+    if provider == 'derstandard_at':
+        return derstandard_at()
+    if provider == 'flatbee_at':
+        return flatbee_at()

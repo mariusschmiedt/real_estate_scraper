@@ -55,7 +55,7 @@ class provider():
             o['city'] = o['address_detected'].replace(o['postalcode'], '').strip()
             o['district'] = o['city']
         
-        url = "https://www.kleinanzeigen.de/" + o["url"]
+        url = self.metaInformation['baseUrl'] + o["url"]
 
 
         o['currency'] = getCurrency(o['price'])

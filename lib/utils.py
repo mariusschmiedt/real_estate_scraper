@@ -32,10 +32,10 @@ def getLanguageId(base_path, country):
     return languageId
 
 def replaceCurrency(value):
-    return replaceArray(value, ['€', 'EURO', '\x82', 'â\x82¬', 'â¬', 'CHF', '$', 'Dollar', 'USD', '/mo', '.—'])
+    return replaceArray(value, ['€', 'EURO', '\x82', 'â\x82¬', 'â¬', 'CHF', '$', 'Dollar', 'USD', '/mo', '.—', ',-', '&euro;'])
 
 def replaceSizeUnit(value):
-    return replaceArray(value, ['m²', 'm2', 'm^2', 'sqft', 'mÂ²', 'm'])
+    return replaceArray(value, ['m&#178;', 'm&sup2;', 'm²', 'm2', 'm^2', 'sqft', 'mÂ²', 'm'])
 
 def replaceRoomAbbr(value):
     return replaceArray(value, ['Zimmer', 'Zi.', 'Zi', 'Rooms', 'Ro'])
@@ -63,7 +63,7 @@ def replaceChrs(value):
 
 def getCurrency(value):
     currency = 'EUR'
-    if '€' in value or 'EUR' in value or '\x82' in value:
+    if '€' in value or 'EUR' in value or '\x82' in value or '&euro;' in value:
         currency = 'EUR'
     if 'CHF' in value:
         currency = 'CHF'
@@ -73,7 +73,7 @@ def getCurrency(value):
 
 def getSizeUnit(value):
     unit = 'm^2'
-    if 'm²' in value or 'm2' in value or 'm^2' in value or 'mÂ²' in value or 'm' in value:
+    if 'm²' in value or 'm2' in value or 'm^2' in value or 'mÂ²' in value or 'm' in value or 'm&sup2;' in value or 'm&#178;' in value:
         unit = 'm^2'
     if 'sqft' in value:
         unit = 'sqft'
@@ -97,3 +97,17 @@ def findPostalCodeInAddress(address):
             postalcode = add
 
     return postalcode
+
+def getNum(value):
+    val_split = value.split(' ')
+    new_value = ''
+    for v in val_split:
+        num = False
+        try:
+            float(v)
+            num = True
+        except:
+            pass
+        if num:
+            new_value = v
+    return new_value

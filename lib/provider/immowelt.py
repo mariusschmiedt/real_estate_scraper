@@ -57,7 +57,7 @@ class provider():
         o['price'] = self.numConvert(o['price'].replace('.', ''))
         o['size'] = self.numConvert(o['size'])
         o['rooms'] = self.numConvert(o['rooms'])
-        o['url'] = "https://www.immowelt.de/expose/" + o['provider_id']
+        o['url'] = self.metaInformation['baseUrl'] + "expose/" + o['provider_id']
 
         try:
             o['price_per_space'] = str(round((float(o['price']) / float(o['size'])), 2))

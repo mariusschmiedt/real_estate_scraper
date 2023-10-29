@@ -13,6 +13,9 @@ class queryStringMutator():
         
         if self.sortByDateParam == '':
             return url
+        
+        if self.sortByDateParam in url:
+            return url
 
         # parse url into its parts
         url_parts = urlparse.urlparse(url)
@@ -26,6 +29,16 @@ class queryStringMutator():
             old_split[1] = self.sortByDateParam
             # form the new path
             new_path = '/' + '/'.join(old_split)
+            # get the position of the old path
+            url_parts = list(url_parts)
+            idx = url_parts.index(old_path)
+            # replace the old path with the new one
+            url_parts[idx] = new_path
+        elif self.provider == 'immoscout_at':
+            # get the path from the url
+            old_path = url_parts.path
+            # form new path
+            new_path = old_path + '/' + self.sortByDateParam
             # get the position of the old path
             url_parts = list(url_parts)
             idx = url_parts.index(old_path)
@@ -51,9 +64,28 @@ class queryStringMutator():
 
         return url
     
-    def paginationModifier(self, url, page):
+    def paginationModifier(self, url, page, listings_per_page):
         if self.provider == 'comparis':
             page = str(int(page) - 1)
+            url = url + self.paginateParam + page
+        if self.provider == 'findmyhome_at':
+            page = str(int(page) - 1)
+            page = page * listings_per_page
+            url = url + self.paginateParam + page
+        if self.provider == 'immoscout_at' or self.provider == 'derstandard_at':
+            if int(page) > 1:
+                url_parts = urlparse.urlparse(url)
+                # get the path from the url
+                old_path = url_parts.path
+                # form new path
+                new_path = old_path + '/' + self.paginateParam + page
+                # get the position of the old path
+                url_parts = list(url_parts)
+                idx = url_parts.index(old_path)
+                # replace the old path with the new one
+                url_parts[idx] = new_path
+                # cretae url
+                url = urlparse.urlunparse(list(url_parts))
         if self.provider == 'kleinanzeigen':
             # get url components
             url_parts = urlparse.urlparse(url)

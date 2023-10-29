@@ -1,4 +1,4 @@
-import re
+
 from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
 
 class provider():
@@ -7,28 +7,28 @@ class provider():
 
         self.config = {
             "search_url": None,
-            "crawlContainer": 'div.ResultList_listItem*',
-            "sortByDateParam": 'o=dateCreated-desc',
+            "crawlContainer": 'li.Item-item-J04',
+            "sortByDateParam": 'aktualitaet',
             "crawlFields": {
-                "provider_id": '',
-                "price": 'span.HgListingCard_price*',
-                "size": 'div.HgListingRoomsLivingSpace_roomsLivingSpace*:raw',
-                "rooms": '',
-                "title": 'p.HgListingDescription_title*:t1',
-                "url": 'a.HgCardElevated_link*@href',
-                "address_detected": 'address',
+                "provider_id": 'a.Item-item__link-pTS@href',
+                "price": 'li.Text-color-gray-dark-wi_ Text-size-s-KGp Text-bold-t5X',
+                "size": 'li.w-full mb-0 mt-0 mr-0*:1c',
+                "rooms": 'li.w-full mb-0 mt-0 mr-0*:2c',
+                "title": 'h2.Text-color-gray-dark-wi_ Text-size-standard-X2v Text-clamp-lines-1-SVo',
+                "url": 'a.Item-item__link-pTS@href',
+                "address_detected": 'address.Item-item__address*',
             },
-            "num_listings": 'span.ResultsNumber_results_zTgsG:1s',
+            "num_listings": 'h2.Headline-sub-headline-N14',
             # "listings_per_page": '25',
             "normalize": self.normalize,
             "filter": self.applyBlacklist,
         }
 
         self.metaInformation = {
-            "name": 'Homegate',
-            "baseUrl": 'http://homegate.ch',
-            "id": 'homegate',
-            "paginate": 'ep=',
+            "name": 'Immoscout AT',
+            "baseUrl": 'https://www.immobilienscout24.at/',
+            "id": 'immoscout_at',
+            "paginate": 'seite-',
         }
 
     def init(self, sourceConfig, blacklist=None):
@@ -51,34 +51,18 @@ class provider():
 
         o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
 
+        if ',' in o['address_detected']:
+            o['city'] = o['address_detected'].split(',')[-1].strip()
+        else:
+            o['city'] = o['address_detected']
+        
         if o['postalcode'] != '':
-            rem_address = o['address_detected'].replace(o['postalcode'], '').strip()
-            if ',' in rem_address:
-                o['city'] = rem_address.split(',')[1].strip()
-            else:
-                o['city'] = rem_address
+            o['city'] = o['city'].replace(o['postalcode'], '').strip()
+                
+        o['url'] = self.metaInformation['baseUrl'][0:-1] + o["url"]
         
-        size_tag = re.sub('\<(.*?)>', ', ', o['size']).strip()
-
-        size_split = [i.strip() for i in size_tag.split(', ') if i != '' and i != ',']
-        # find the number of bedrooms
-        for p in range(1, len(size_split)):
-            num = False
-            try:
-                int(size_split[p-1])
-                num = True
-            except:
-                pass
-            if num:
-                if 'Zimmer' in size_split[p-1]:
-                    o['rooms'] = size_split[p-1]
-                else:
-                    o['size'] = size_split[p-1]
+        o['provider_id'] = o['provider_id'].replace('expose', '').replace('/', '')
         
-        url = self.metaInformation['baseUrl'] + o["url"]
-
-        o['provider_id'] = o["url"].split('/')[-1]
-
         o['currency'] = getCurrency(o['price'])
         o['price'] = replaceCurrency(o['price'])
 
@@ -91,7 +75,6 @@ class provider():
         o['price'] = self.numConvert(o['price'])
         o['size'] = self.numConvert(o['size'])
         o['rooms'] = self.numConvert(o['rooms'])
-        o['url'] = url
 
         try:
             o['price_per_space'] = str(round((float(o['price']) / float(o['size'])), 2))
@@ -104,13 +87,13 @@ class provider():
         return not isOneOf(o['title'], self.appliedBlackList)
     
     def numConvert(self, value):
-        value = value.replace(' ', '')
-        value = value.replace('´', '')
-        value = value.replace("'", '')
-
         comma_count = value.count(',')
         dot_count = value.count('.')
 
         if comma_count == 1 and dot_count == 0:
             value = value.replace(',', '.')
+        elif dot_count == 1 and comma_count == 1:
+            value = value.replace('.', '').replace(',', '.')
+        elif dot_count == 1 and comma_count == 0:
+            value = value.replace('.', '')
         return value

@@ -49,7 +49,7 @@ class provider():
         return nullVal
 
     def normalize(self, o):
-        url = "https://www.immoscout24.ch" + o["provider_id"]
+        url = self.metaInformation['baseUrl'] + o["provider_id"]
 
         o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
 

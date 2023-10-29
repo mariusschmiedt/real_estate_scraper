@@ -1,6 +1,5 @@
 
-import re
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
+from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, getNum
 
 class provider():
     def __init__(self):
@@ -8,27 +7,28 @@ class provider():
 
         self.config = {
             "search_url": None,
-            "crawlContainer": 'li.result-list__listing',
-            "sortByDateParam": 'sorting=2',
+            "crawlContainer": 'div.result-data-container',
+            "sortByDateParam": 'SortType=1',
             "crawlFields": {
-                "provider_id": 'article.result-list-entry@data-obid',
-                "price": 'dd.font-highlight font-tabular:1c',
-                "size": 'dd.font-highlight font-tabular:2c',
-                "rooms": 'span.onlySmall',
-                "title": 'a.result-list-entry__brand-title-container',
-                "url": 'a.result-list-entry__brand-title-container@href',
-                "address_detected": 'button.result-list-entry__map-link',
+                "provider_id": 'a@href',
+                "price": 'span.result-data:3c',
+                "size": 'span.result-data:1c',
+                "rooms": 'span.result-data:2c',
+                "title": 'a@title',
+                "url": 'a@href',
+                "address_detected": 'span.adress',
             },
-            "num_listings": 'span.resultlist-resultCount',
+            "num_listings": 'h1.headerImmoSearch:1s',
+            # "listings_per_page": '25',
             "normalize": self.normalize,
             "filter": self.applyBlacklist,
         }
 
         self.metaInformation = {
-            "name": 'Immoscout',
-            "baseUrl": 'https://www.immobilienscout24.de',
-            "id": 'immoscout',
-            "paginate": '?pagenumber=',
+            "name": 'Der Standard AT',
+            "baseUrl": 'https://immobilien.derstandard.at/',
+            "id": 'derstandard_at',
+            "paginate": 'seite-',
         }
 
     def init(self, sourceConfig, blacklist=None):
@@ -48,34 +48,36 @@ class provider():
         return nullVal
 
     def normalize(self, o):
-        url = self.metaInformation['baseUrl'] + o["url"].replace(o["url"][0:o["url"].index("/expose")+1], '')
 
         o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
 
-        if ',' in o['address_detected']:
-            o['city'] = o['address_detected'].split(',')[-1]
-            o['district'] = o['address_detected'].split(',')[-2]
-        else:
-            o['city'] = o['address_detected']
-
-        if 'city' in o:
-            if 'Kreis' in o['city'] and 'district' in o:
-                o['city'] = o['district']
-                o['district'] = ''
+        if o['postalcode'] != '':
+            o['city'] = o['address_detected'].replace(o['postalcode'], '').strip()
         
+        o['provider_id'] = o['provider_id'].replace('/immobiliensuche/detail/', '').split('/')[0]
+
+        o['url'] = self.metaInformation['baseUrl'] + 'immobiliensuche/detail/' + o["provider_id"]
+
+
         o['currency'] = getCurrency(o['price'])
         o['price'] = replaceCurrency(o['price'])
+        o['price'] = self.numConvert(o['price'])
+        o['price'] = getNum(o['price'])
 
         o['size_unit'] = getSizeUnit(o['size'])
         o['size'] = replaceSizeUnit(o['size'])
+        o['size'] = self.numConvert(o['size'])
+        o['size'] = getNum(o['size'])
 
         o['rooms'] = replaceRoomAbbr(o['rooms'])
-
-
-        o['price'] = self.numConvert(o['price'])
-        o['size'] = self.numConvert(o['size'])
         o['rooms'] = self.numConvert(o['rooms'])
-        o['url'] = url
+        o['rooms'] = getNum(o['rooms'])
+
+        try:
+            o['price_per_space'] = str(round((float(o['price']) / float(o['size'])), 2))
+        except:
+            pass
+
         return o
 
     def applyBlacklist(self, o):

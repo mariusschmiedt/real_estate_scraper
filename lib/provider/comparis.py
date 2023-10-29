@@ -53,7 +53,7 @@ class provider():
         o["provider_id"] = str(o["provider_id"])
 
         # create url
-        url = "https://www.comparis.ch/immobilien/marktplatz/details/show/" + o["provider_id"]
+        url = self.metaInformation['baseUrl'] + "immobilien/marktplatz/details/show/" + o["provider_id"]
         o['url'] = url
         
         # address is a list. get the postal code and the city from the list

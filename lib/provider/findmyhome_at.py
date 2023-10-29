@@ -1,6 +1,5 @@
-
 import re
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
+from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, getNum
 
 class provider():
     def __init__(self):
@@ -8,27 +7,29 @@ class provider():
 
         self.config = {
             "search_url": None,
-            "crawlContainer": 'li.result-list__listing',
-            "sortByDateParam": 'sorting=2',
+            "crawlContainer": 'div.col-xs-12 col-sm-9 col-md-9 col-lg-9',
+            "sortByDateParam": '',
+            "top_field": 'div.col-xs-12 col-sm-11 col-md-11 col-lg-11',
             "crawlFields": {
-                "provider_id": 'article.result-list-entry@data-obid',
-                "price": 'dd.font-highlight font-tabular:1c',
-                "size": 'dd.font-highlight font-tabular:2c',
-                "rooms": 'span.onlySmall',
-                "title": 'a.result-list-entry__brand-title-container',
-                "url": 'a.result-list-entry__brand-title-container@href',
-                "address_detected": 'button.result-list-entry__map-link',
+                "provider_id": 'a.btnHeadlineErgebnisliste@href',
+                "price": 'div.col-xs-4 col-lg-2:1c',
+                "size": 'div.col-xs-4 col-lg-2:2c',
+                "rooms": 'div.col-xs-4 col-lg-2:3c',
+                "title": 'a.btnHeadlineErgebnisliste',
+                "url": 'a.btnHeadlineErgebnisliste@href',
+                "address_detected": 'div.col-xs-12 col-sm-12 col-md-12 col-lg-12:2c',
             },
-            "num_listings": 'span.resultlist-resultCount',
+            "num_listings": 'div.hidden-md hidden-lg col-xs-12:3s',
+            # "listings_per_page": '25',
             "normalize": self.normalize,
             "filter": self.applyBlacklist,
         }
 
         self.metaInformation = {
-            "name": 'Immoscout',
-            "baseUrl": 'https://www.immobilienscout24.de',
-            "id": 'immoscout',
-            "paginate": '?pagenumber=',
+            "name": 'Findmyhome',
+            "baseUrl": 'https://www.findmyhome.at/',
+            "id": 'findmyhome_at',
+            "paginate": 'entry=',
         }
 
     def init(self, sourceConfig, blacklist=None):
@@ -48,34 +49,36 @@ class provider():
         return nullVal
 
     def normalize(self, o):
-        url = self.metaInformation['baseUrl'] + o["url"].replace(o["url"][0:o["url"].index("/expose")+1], '')
-
+        o['provider_id'] = re.sub('[^0-9]','', o['provider_id'])
+        o['address_detected'] = o['address_detected'].replace('Ort:', '').strip()
         o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
 
-        if ',' in o['address_detected']:
-            o['city'] = o['address_detected'].split(',')[-1]
-            o['district'] = o['address_detected'].split(',')[-2]
-        else:
-            o['city'] = o['address_detected']
-
-        if 'city' in o:
-            if 'Kreis' in o['city'] and 'district' in o:
-                o['city'] = o['district']
-                o['district'] = ''
+        if o['postalcode'] != '':
+            o['city'] = o['address_detected'].replace(o['postalcode'], '').strip()
         
+        o['url'] = self.metaInformation['baseUrl'] + o["provider_id"]
+
+
         o['currency'] = getCurrency(o['price'])
         o['price'] = replaceCurrency(o['price'])
+        o['price'] = getNum(o['price'])
 
         o['size_unit'] = getSizeUnit(o['size'])
         o['size'] = replaceSizeUnit(o['size'])
+        o['size'] = getNum(o['size'])
 
         o['rooms'] = replaceRoomAbbr(o['rooms'])
-
+        o['rooms'] = getNum(o['rooms'])
 
         o['price'] = self.numConvert(o['price'])
         o['size'] = self.numConvert(o['size'])
         o['rooms'] = self.numConvert(o['rooms'])
-        o['url'] = url
+
+        try:
+            o['price_per_space'] = str(round((float(o['price']) / float(o['size'])), 2))
+        except:
+            pass
+
         return o
 
     def applyBlacklist(self, o):

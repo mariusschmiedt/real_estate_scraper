@@ -16,9 +16,9 @@ def getAttr(value):
     class_name_start = False
     raw = False
     if '@' in value:
-        class_name = value.split('@')[0]
-        if class_name == '':
-            class_name = None
+        tag = value.split('@')[0]
+        if tag == '':
+            tag = None
         attr_name = value.split('@')[1]
         if '=' in attr_name:
             attr_name_split = attr_name.split('=')
@@ -27,8 +27,8 @@ def getAttr(value):
     
     if '.' in value:
         value_split = value.split('.')
-        if class_name is not None:
-            value_split = class_name.split('.')
+        if tag is not None:
+            value_split = tag.split('.')
         tag = value_split[0]
         class_name = ' '.join([value_split[v] for v in range(1, len(value_split))])
     
@@ -58,52 +58,75 @@ def getAttr(value):
     if '@' not in value and '=' not in value and '.' not in value and ':' not in value and '*' not in value:
         tag = value
     
-    return tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw
+    attr_dict = {
+        "tag": tag,
+        "class_name": class_name,
+        "attr_name": attr_name,
+        "attr_val_des": attr_val_des,
+        "class_name_start": class_name_start,
+        "attr_val_des_start": attr_val_des_start,
+        "child": child,
+        "split": split,
+        "tag_split": tag_split,
+        "raw": raw
+    }
+    return attr_dict
 
-
-def getContent(container, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw, get_container = False):
+def getContent(container, attr_dict, get_container = False):
     result = None
-    if child is None:
-        child = 0
-    if tag is not None:
-        tag_find = container.find_all(tag, {"class": class_name})
-        if class_name_start:
-            tag_find = container.find_all(tag, {"class": lambda v: v and v.startswith(class_name)})
+    if attr_dict['child'] is None:
+        attr_dict['child'] = 0
+    if attr_dict['tag'] is not None:
+        tag_find = container.find_all(attr_dict['tag'], {"class": attr_dict['class_name']})
+        if attr_dict['class_name_start']:
+            tag_find = container.find_all(attr_dict['tag'], {"class": lambda v: v and v.startswith(attr_dict['class_name'])})
         result = [r for r in tag_find]
-        if attr_name is not None:
-            result = [r for r in result if attr_name in r.attrs]
+        if attr_dict['attr_name'] is not None:
+            result = [r for r in result if attr_dict['attr_name'] in r.attrs]
         if len(result) == 0:
             result = None
     if not get_container:
         get_tag_content = False
-        if attr_name is not None:
-            if attr_val_des is not None:
-                result = [r for r in result if r.attrs[attr_name] == attr_val_des]
-                if attr_val_des_start:
-                    result = [r for r in result if r.attrs[attr_name].startswith(attr_val_des)]
+        if attr_dict['attr_name'] is not None:
+            if attr_dict['attr_val_des'] is not None:
+                result = [r for r in result if r.attrs[attr_dict['attr_name']] == attr_dict['attr_val_des']]
+                if attr_dict['attr_val_des_start']:
+                    result = [r for r in result if r.attrs[attr_dict['attr_name']].startswith(attr_dict['attr_val_des'])]
                 get_tag_content = True
             else:
-                if tag is not None and result is not None:
-                    result = result[child].get(attr_name)
+                if attr_dict['tag'] is not None and result is not None:
+                    result = result[attr_dict['child']].get(attr_dict['attr_name'])
                 else:
-                    result = container.get(attr_name)
-        elif attr_name is None and result is not None:
+                    result = container.get(attr_dict['attr_name'])
+        elif attr_dict['attr_name'] is None and result is not None:
             get_tag_content = True
         if get_tag_content:
-            result = result[child]
-            if split is not None and not raw:
+            result = result[attr_dict['child']]
+            if attr_dict['split'] is not None and not attr_dict['raw']:
                 result = result.text.replace('\n', '').strip()
-                result = result.split(' ')[split]
-            elif tag_split is not None and not raw:
-                result = result.find_all()[tag_split]
+                result = [i for i in result.split(' ') if i != ''][attr_dict['split']]
+            elif attr_dict['tag_split'] is not None and not attr_dict['raw']:
+                result = result.find_all()[attr_dict['tag_split']]
                 result = result.text.replace('\n', '').strip()
-            elif raw:
+            elif attr_dict['raw']:
                 result = str(result)
             else:
                 result = result.text.replace('\n', '').strip()
-    if attr_val_des is not None and tag is not None:
-        if 'json' in attr_val_des and tag == 'script':
-            result = json.loads(result[child].text)
+                result = ' '.join([i for i in result.split(' ') if i != ''])
+    else:
+        if attr_dict['attr_val_des'] is not None and attr_dict['tag'] is not None:
+            if 'json' in attr_dict['attr_val_des'] and attr_dict['tag'] == 'script':
+                result = json.loads(result[attr_dict['child']].text)
+        else:
+            if 'top_field' in config:
+                attr_dict_top = getAttr(config['top_field'])
+                result1 = result
+                result = list()
+                for con in result1:
+                    tag_find = con.find_all(attr_dict_top['tag'], {"class": attr_dict_top['class_name']})
+                    top_find = [r for r in tag_find]
+                    if len(top_find) == 0:
+                        result.append(con)
     return result
 
 def getJsonResult(container, value):
@@ -114,28 +137,7 @@ def getJsonResult(container, value):
     return container
 
 def normalize(o):
-    o['size_unit'] = 'm'
-    o['size'] = o['size'].replace('m', '').strip()
-    size_split = o['size'].split(' ')
-    if type(size_split) == list:
-        if len(size_split) > 1:
-            o['size'] = size_split[0]
-    o['rooms'] = o['rooms'].replace('Rooms', '').strip()
-    o['price'] = o['price'].replace("'", '')
-    o['size'] = o['size'].replace("'", '')
-    o['rooms'] = o['rooms'].replace("'", '')
-    o['provider_id'] = o['provider_id'].split('ad-link-')[1]
-    url = ''
-    if o['price'] is not None:
-        if o['price'] != '':
-            if int(o['price']) < 20000:
-                url = 'https://www.homegate.ch/rent/' + o['provider_id']
-            else:
-                url = 'https://www.homegate.ch/buy/' + o['provider_id']
-    
-    o['url'] = url
-    if url == '':
-        o['price'] = ''
+    o['postalcode'] = ''
     for add in o['address_detected'].split(' '):
         num = False
         try:
@@ -145,47 +147,85 @@ def normalize(o):
             pass
         if num and len(add) >=4:
             o['postalcode'] = add
-    
-    o['city'] = o['address_detected'].replace(o['postalcode'], '').strip()
-    
+    if '|' in o['address_detected']:
+        o['city'] = o['address_detected'].split('|')[0].replace('Bezirk:', '').replace('-Umgebung', '').strip()
+        o['city'] = re.sub('\(.*\)', '', o['city']).strip()
+        o['city'] = re.sub('[0-9].*', '', o['city']).strip()
+    o['provider_id'] = o['provider_id'].split('/')[-1].split('-')[0].strip()
+    o['url'] = 'https://www.flatbee.at/' + 'properties/searchengine_property_detail/' + o["provider_id"]
+    if '&euro;' in o['price'] or '€' in o['price']:
+        o['currency'] = 'EUR'
+    o['price'] = o['price'].replace('&euro;', '').replace('€', '').replace(',-', '').strip()
+    o['price'] = numConvert(o['price'])
+    if 'm²' in o['size']:
+        o['size_unit'] ='m^2'
+    o['size'] = o['size'].replace('m²', '').strip()
+    o['size'] = numConvert(o['size'])
+    o['size'] = getNum(o['size'])
+    o['rooms'] = o['rooms'].replace('Zimmer', '').strip()
+    o['rooms'] = numConvert(o['rooms'])
     try:
         o['price_per_space'] = str(round((float(o['price']) / float(o['size'])), 2))
     except:
         pass
     return o
 
+def numConvert(value):
+    comma_count = value.count(',')
+    dot_count = value.count('.')
+    if comma_count == 1 and dot_count == 0:
+        value = value.replace(',', '.')
+    elif dot_count == 1 and comma_count == 1:
+        value = value.replace('.', '').replace(',', '.')
+    elif dot_count == 1 and comma_count == 0:
+        value = value.replace('.', '')
+    return value
+
+def getNum(value):
+    val_split = value.split(' ')
+    new_value = ''
+    for v in val_split:
+        num = False
+        try:
+            float(v)
+            num = True
+        except:
+            pass
+        if num:
+            new_value = v
+    return new_value
+
 config = {
     "search_url": None,
-    "crawlContainer": 'a.row search-results__list__item*',
-    "sortByDateParam": 'sort=dd',
+    "crawlContainer": 'div.col-lg-4*',
+    "sortByDateParam": '',
     "crawlFields": {
-        "provider_id": 'a.row search-results__list__item@data-gtm-id',
-        "price": 'span.price-tag__amount',
-        "currency": 'span.price-tag__currency',
-        "size": 'span.tags__tag:3c',
-        "rooms": 'span.tags__tag:2c',
-        "title": 'h2.search-results__list__item__meta__title',
-        "url": 'a.row search-results__list__item@href',
-        "address_detected": 'div.search-results__list__item__meta__description*',
+        "provider_id": 'a@href',
+        "price": 'div.property-box-pricev',
+        "size": 'div.property-box-meta-itemv col-lg-3*:2c',
+        "rooms": 'div.property-box-meta-itemv col-lg-3*:1c',
+        "title": 'h3.property-titlev g_d_none*',
+        "url": 'a@href',
+        "address_detected": 'table.table sp_tbl:3t',
     },
-    "num_listings": 'h2.h4 search-results__subheadline*',
+    "num_listings": 'div.countProperty:1s',
 }
 
 # soup = BeautifulSoup(page_content,'html5lib')
 
-with open("/Users/mariusschmiedt/github/fredy_python/lib/provider/example_pages/homech.html") as fp:
+with open("/Users/mariusschmiedt/github/fredy_python/lib/provider/example_pages/flatbee_at.html") as fp:
     soup = BeautifulSoup(fp, 'html.parser')
 
-tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw = getAttr(config['crawlContainer'])
-containers = getContent(soup, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw, get_container=True)
+attr_dict = getAttr(config['crawlContainer'])
+containers = getContent(soup, attr_dict, get_container=True)
 
 found_listings = 0
 if 'num_listings' in config:
     if type(containers) == dict:
         found_listings = int(getJsonResult(containers, config['num_listings']))
     else:
-        tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw = getAttr(config['num_listings'])
-        found_listings_num = getContent(soup, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw)
+        attr_dict = getAttr(config['num_listings'])
+        found_listings_num = getContent(soup, attr_dict)
         found_listings_num = re.sub('[^0-9]','', found_listings_num)
         found_listings = int(found_listings_num)
 
@@ -204,8 +244,8 @@ for key in config['crawlFields'].keys():
         if config['crawlFields'][key] in con:
             result = con[config['crawlFields'][key]]
     else:
-        tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw = getAttr(config['crawlFields'][key])
-        result = getContent(con, tag, class_name, attr_name, attr_val_des, class_name_start, attr_val_des_start, child, split, tag_split, raw)
+        attr_dict = getAttr(config['crawlFields'][key])
+        result = getContent(con, attr_dict)
     if result is not None:
         listing[key] = result
 

@@ -67,10 +67,11 @@ class provider():
         url = ''
         if o['price'] is not None:
             if o['price'] != '':
+                url = self.metaInformation['baseUrl'] 
                 if int(o['price']) < 20000:
-                    url = 'https://www.homegate.ch/rent/' + o['provider_id']
+                    url = '/rent/' + o['provider_id']
                 else:
-                    url = 'https://www.homegate.ch/buy/' + o['provider_id']
+                    url = '/buy/' + o['provider_id']
         
         o['url'] = url
 

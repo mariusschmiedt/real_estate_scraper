@@ -1,6 +1,5 @@
-
 import re
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
+from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, getNum
 
 class provider():
     def __init__(self):
@@ -8,27 +7,28 @@ class provider():
 
         self.config = {
             "search_url": None,
-            "crawlContainer": 'li.result-list__listing',
-            "sortByDateParam": 'sorting=2',
+            "crawlContainer": 'div.col-lg-4*',
+            "sortByDateParam": '',
             "crawlFields": {
-                "provider_id": 'article.result-list-entry@data-obid',
-                "price": 'dd.font-highlight font-tabular:1c',
-                "size": 'dd.font-highlight font-tabular:2c',
-                "rooms": 'span.onlySmall',
-                "title": 'a.result-list-entry__brand-title-container',
-                "url": 'a.result-list-entry__brand-title-container@href',
-                "address_detected": 'button.result-list-entry__map-link',
+                "provider_id": 'a@href',
+                "price": 'div.property-box-pricev',
+                "size": 'div.property-box-meta-itemv col-lg-3*:2c',
+                "rooms": 'div.property-box-meta-itemv col-lg-3*:1c',
+                "title": 'h3.property-titlev g_d_none*',
+                "url": 'a@href',
+                "address_detected": 'table.table sp_tbl:3t',
             },
-            "num_listings": 'span.resultlist-resultCount',
+            "num_listings": 'div.countProperty:1s',
+            # "listings_per_page": '25',
             "normalize": self.normalize,
             "filter": self.applyBlacklist,
         }
 
         self.metaInformation = {
-            "name": 'Immoscout',
-            "baseUrl": 'https://www.immobilienscout24.de',
-            "id": 'immoscout',
-            "paginate": '?pagenumber=',
+            "name": 'Flatbee AT',
+            "baseUrl": 'https://www.flatbee.at/',
+            "id": 'flatbee_at',
+            "paginate": 'page=',
         }
 
     def init(self, sourceConfig, blacklist=None):
@@ -48,34 +48,36 @@ class provider():
         return nullVal
 
     def normalize(self, o):
-        url = self.metaInformation['baseUrl'] + o["url"].replace(o["url"][0:o["url"].index("/expose")+1], '')
 
         o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
 
-        if ',' in o['address_detected']:
-            o['city'] = o['address_detected'].split(',')[-1]
-            o['district'] = o['address_detected'].split(',')[-2]
-        else:
-            o['city'] = o['address_detected']
+        if '|' in o['address_detected']:
+            o['city'] = o['address_detected'].split('|')[0].replace('Bezirk:', '').replace('-Umgebung', '').strip()
+            o['city'] = re.sub('\(.*\)', '', o['city']).strip()
+            o['city'] = re.sub('[0-9].*', '', o['city']).strip()
 
-        if 'city' in o:
-            if 'Kreis' in o['city'] and 'district' in o:
-                o['city'] = o['district']
-                o['district'] = ''
-        
+        o['provider_id'] = o['provider_id'].split('/')[-1].split('-')[0].strip()
+
+        o['url'] = self.metaInformation['baseUrl'] + 'properties/searchengine_property_detail/' + o["provider_id"]
+
+
         o['currency'] = getCurrency(o['price'])
         o['price'] = replaceCurrency(o['price'])
+        o['price'] = self.numConvert(o['price'])
 
         o['size_unit'] = getSizeUnit(o['size'])
         o['size'] = replaceSizeUnit(o['size'])
+        o['size'] = self.numConvert(o['size'])
+        o['size'] = getNum(o['size'])
 
         o['rooms'] = replaceRoomAbbr(o['rooms'])
-
-
-        o['price'] = self.numConvert(o['price'])
-        o['size'] = self.numConvert(o['size'])
         o['rooms'] = self.numConvert(o['rooms'])
-        o['url'] = url
+
+        try:
+            o['price_per_space'] = str(round((float(o['price']) / float(o['size'])), 2))
+        except:
+            pass
+
         return o
 
     def applyBlacklist(self, o):
