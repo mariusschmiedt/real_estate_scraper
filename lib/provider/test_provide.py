@@ -32,19 +32,25 @@ def getAttr(value):
         tag = value_split[0]
         class_name = ' '.join([value_split[v] for v in range(1, len(value_split))])
     
+    colon_split = None
     if class_name is not None:
         if ':' in class_name:
-            class_split = class_name.split(':')
-            class_name = class_split[0]
-            for c in range(1, len(class_split)):
-                if class_split[c].endswith('c'):
-                    child = int(class_split[c].replace('c', ''))-1
-                if class_split[c].endswith('s'):
-                    split = int(class_split[c].replace('s', ''))-1
-                if class_split[c].endswith('t'):
-                    tag_split = int(class_split[c].replace('t', ''))-1
-                if class_split[c].endswith('raw'):
-                    raw = True
+            colon_split = class_name.split(':')
+            class_name = colon_split[0]
+    if attr_val_des is not None:
+        if ':' in attr_val_des:
+            colon_split = attr_val_des.split(':')
+            attr_val_des = colon_split[0]
+    if colon_split is not None:
+        for c in range(1, len(colon_split)):
+            if colon_split[c].endswith('c'):
+                child = int(colon_split[c].replace('c', ''))-1
+            if colon_split[c].endswith('s'):
+                split = int(colon_split[c].replace('s', ''))-1
+            if colon_split[c].endswith('t'):
+                tag_split = int(colon_split[c].replace('t', ''))-1
+            if colon_split[c].endswith('raw'):
+                raw = True
     
     if class_name is not None:
         if class_name.endswith('*'):
@@ -77,7 +83,9 @@ def getContent(container, attr_dict, get_container = False):
     if attr_dict['child'] is None:
         attr_dict['child'] = 0
     if attr_dict['tag'] is not None:
-        tag_find = container.find_all(attr_dict['tag'], {"class": attr_dict['class_name']})
+        tag_find = container.find_all(attr_dict['tag'])
+        if attr_dict['class_name'] is not None:
+            tag_find = container.find_all(attr_dict['tag'], {"class": attr_dict['class_name']})
         if attr_dict['class_name_start']:
             tag_find = container.find_all(attr_dict['tag'], {"class": lambda v: v and v.startswith(attr_dict['class_name'])})
         result = [r for r in tag_find]
@@ -89,9 +97,10 @@ def getContent(container, attr_dict, get_container = False):
         get_tag_content = False
         if attr_dict['attr_name'] is not None:
             if attr_dict['attr_val_des'] is not None:
-                result = [r for r in result if r.attrs[attr_dict['attr_name']] == attr_dict['attr_val_des']]
                 if attr_dict['attr_val_des_start']:
                     result = [r for r in result if r.attrs[attr_dict['attr_name']].startswith(attr_dict['attr_val_des'])]
+                else:
+                    result = [r for r in result if r.attrs[attr_dict['attr_name']] == attr_dict['attr_val_des']]
                 get_tag_content = True
             else:
                 if attr_dict['tag'] is not None and result is not None:
@@ -147,22 +156,21 @@ def normalize(o):
             pass
         if num and len(add) >=4:
             o['postalcode'] = add
-    if '|' in o['address_detected']:
-        o['city'] = o['address_detected'].split('|')[0].replace('Bezirk:', '').replace('-Umgebung', '').strip()
-        o['city'] = re.sub('\(.*\)', '', o['city']).strip()
-        o['city'] = re.sub('[0-9].*', '', o['city']).strip()
-    o['provider_id'] = o['provider_id'].split('/')[-1].split('-')[0].strip()
-    o['url'] = 'https://www.flatbee.at/' + 'properties/searchengine_property_detail/' + o["provider_id"]
+    if o['postalcode'] != '':
+        if ',' in o['address_detected']:
+            o['city'] = o['address_detected'].split(',')[-1].strip().replace(o['postalcode'], '').strip()
+        else:
+            o['city'] = o['address_detected'].replace(o['postalcode'], '').strip()
+    o['url'] = 'https://immo.kurier.at/' + 'immobilien/' + o["provider_id"]
     if '&euro;' in o['price'] or '€' in o['price']:
         o['currency'] = 'EUR'
     o['price'] = o['price'].replace('&euro;', '').replace('€', '').replace(',-', '').strip()
     o['price'] = numConvert(o['price'])
-    if 'm²' in o['size']:
+    if 'm²' in o['size'] or 'm2' in o['size']:
         o['size_unit'] ='m^2'
-    o['size'] = o['size'].replace('m²', '').strip()
+    o['size'] = o['size'].replace('m²', '').replace('m2', '').strip()
     o['size'] = numConvert(o['size'])
-    o['size'] = getNum(o['size'])
-    o['rooms'] = o['rooms'].replace('Zimmer', '').strip()
+    o['rooms'] = o['rooms'].replace('Zimmer', '').replace('Zi', '').strip()
     o['rooms'] = numConvert(o['rooms'])
     try:
         o['price_per_space'] = str(round((float(o['price']) / float(o['size'])), 2))
@@ -197,23 +205,23 @@ def getNum(value):
 
 config = {
     "search_url": None,
-    "crawlContainer": 'div.col-lg-4*',
-    "sortByDateParam": '',
+    "crawlContainer": 'div.item-wrap js-serp-item',
+    "sortByDateParam": 's=most_recently_updated_first',
     "crawlFields": {
-        "provider_id": 'a@href',
-        "price": 'div.property-box-pricev',
-        "size": 'div.property-box-meta-itemv col-lg-3*:2c',
-        "rooms": 'div.property-box-meta-itemv col-lg-3*:1c',
-        "title": 'h3.property-titlev g_d_none*',
-        "url": 'a@href',
-        "address_detected": 'table.table sp_tbl:3t',
+        "provider_id": '@data-id',
+        "price": 'div.item__spec item-spec-price',
+        "size": 'div.item__spec item-spec-area',
+        "rooms": 'div.item__spec item-spec-rooms',
+        "title": 'a.js-item-title-link:1c',
+        "url": 'a.js-item-title-link@href',
+        "address_detected": 'div.item__locality',
     },
-    "num_listings": 'div.countProperty:1s',
+    "num_listings": 'li.breadcrumb-item active:1s',
 }
 
 # soup = BeautifulSoup(page_content,'html5lib')
 
-with open("/Users/mariusschmiedt/github/fredy_python/lib/provider/example_pages/flatbee_at.html") as fp:
+with open("/Users/mariusschmiedt/github/fredy_python/lib/provider/example_pages/immo_kurier_at.html") as fp:
     soup = BeautifulSoup(fp, 'html.parser')
 
 attr_dict = getAttr(config['crawlContainer'])
@@ -248,6 +256,9 @@ for key in config['crawlFields'].keys():
         result = getContent(con, attr_dict)
     if result is not None:
         listing[key] = result
+
+for key in listing.keys():
+    print(key + ': ' + str(listing[key]))
 
 listing = normalize(listing)
 

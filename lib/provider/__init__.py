@@ -12,6 +12,9 @@ from .findmyhome_at import provider as findmyhome_at
 from .immoscout_at import provider as immoscout_at
 from .derstandard_at import provider as derstandard_at
 from .flatbee_at import provider as flatbee_at
+from .immo_kurier_at import provider as immo_kurier_at
+from .willhaben_at import provider as willhaben_at
+from .wohnnet_at import provider as wohnnet_at
 
 def getProvider(provider):
     if provider == 'immoswp':
@@ -42,3 +45,9 @@ def getProvider(provider):
         return derstandard_at()
     if provider == 'flatbee_at':
         return flatbee_at()
+    if provider == 'immo_kurier_at':
+        return immo_kurier_at()
+    if provider == 'willhaben_at':
+        return willhaben_at()
+    if provider == 'wohnnet_at':
+        return wohnnet_at()

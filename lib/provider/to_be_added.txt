@@ -1,16 +1,8 @@
 Österreich 
 Mietguru.at
-Alle-gemeinsam.at
-Willhaben.at
 Immosuchmaschine.at
-Wohnnet.at
-Remax.at/immobilien
 immodirekt.at
-immobilien.net
-a-immobilienmarkt.at
-immobilienseiten.com
-immowelt.at
-immo.kurier.at
+
 
 Frankreich 
 leboncoin
@@ -27,3 +19,6 @@ findmyhome_at
 Immobilienscout24.at
 immobilien.derStandard.at
 Flatbee.at
+Willhaben.at
+Wohnnet.at
+immo.kurier.at

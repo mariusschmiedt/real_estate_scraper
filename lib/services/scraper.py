@@ -154,19 +154,25 @@ class Scraper():
             tag = value_split[0]
             class_name = ' '.join([value_split[v] for v in range(1, len(value_split))])
         
+        colon_split = None
         if class_name is not None:
             if ':' in class_name:
-                class_split = class_name.split(':')
-                class_name = class_split[0]
-                for c in range(1, len(class_split)):
-                    if class_split[c].endswith('c'):
-                        child = int(class_split[c].replace('c', ''))-1
-                    if class_split[c].endswith('s'):
-                        split = int(class_split[c].replace('s', ''))-1
-                    if class_split[c].endswith('t'):
-                        tag_split = int(class_split[c].replace('t', ''))-1
-                    if class_split[c].endswith('raw'):
-                        raw = True
+                colon_split = class_name.split(':')
+                class_name = colon_split[0]
+        if attr_val_des is not None:
+            if ':' in attr_val_des:
+                colon_split = attr_val_des.split(':')
+                attr_val_des = colon_split[0]
+        if colon_split is not None:
+            for c in range(1, len(colon_split)):
+                if colon_split[c].endswith('c'):
+                    child = int(colon_split[c].replace('c', ''))-1
+                if colon_split[c].endswith('s'):
+                    split = int(colon_split[c].replace('s', ''))-1
+                if colon_split[c].endswith('t'):
+                    tag_split = int(colon_split[c].replace('t', ''))-1
+                if colon_split[c].endswith('raw'):
+                    raw = True
         
         if class_name is not None:
             if class_name.endswith('*'):
@@ -200,7 +206,9 @@ class Scraper():
         if attr_dict['child'] is None:
             attr_dict['child'] = 0
         if attr_dict['tag'] is not None:
-            tag_find = container.find_all(attr_dict['tag'], {"class": attr_dict['class_name']})
+            tag_find = container.find_all(attr_dict['tag'])
+            if attr_dict['class_name'] is not None:
+                tag_find = container.find_all(attr_dict['tag'], {"class": attr_dict['class_name']})
             if attr_dict['class_name_start']:
                 tag_find = container.find_all(attr_dict['tag'], {"class": lambda v: v and v.startswith(attr_dict['class_name'])})
             result = [r for r in tag_find]
@@ -212,9 +220,10 @@ class Scraper():
             get_tag_content = False
             if attr_dict['attr_name'] is not None:
                 if attr_dict['attr_val_des'] is not None:
-                    result = [r for r in result if r.attrs[attr_dict['attr_name']] == attr_dict['attr_val_des']]
                     if attr_dict['attr_val_des_start']:
                         result = [r for r in result if r.attrs[attr_dict['attr_name']].startswith(attr_dict['attr_val_des'])]
+                    else:
+                        result = [r for r in result if r.attrs[attr_dict['attr_name']] == attr_dict['attr_val_des']]
                     get_tag_content = True
                 else:
                     if attr_dict['tag'] is not None and result is not None:
