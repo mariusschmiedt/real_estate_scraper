@@ -10,7 +10,7 @@ class writeListing():
     def writeListingToDb(self, listing):
         
         # query to check if an entry is already in the database
-        self.sql.cur.execute("SELECT id FROM " + self.sql.table_name + " WHERE provider_id = '" + listing["provider_id"] + "'")    
+        self.sql.cur.execute("SELECT id FROM " + self.sql.table_name + " WHERE provider_id = '" + listing["provider_id"] + "' AND provider = '" + listing["provider"]  + "'")
         existingID = self.sql.cur.fetchall()
         
         # query to check if a similar entry is already in the database

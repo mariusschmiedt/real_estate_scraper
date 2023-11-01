@@ -39,6 +39,8 @@ class Scraper():
         self.driver = makeDriver(self.headers)
 
         self.maxPageNum = '1'
+        self.blocked = False
+        self.bad_response = ''
     
     def scrape(self, url, get_paginate = False):
         page_content = None
@@ -58,45 +60,51 @@ class Scraper():
         attr_dict = self.getAttr(self.providerConfig['crawlContainer'])
         containers = self.getContent(soup, attr_dict, get_container=True)
         
+        if containers is None:
+            self.blocked = True
+            self.bad_response = page_content             
         
-
-        if get_paginate:
-            found_listings = 0
-            if 'num_listings' in self.providerConfig:
+        if not self.blocked:
+            if get_paginate:
+                found_listings = 0
+                if 'num_listings' in self.providerConfig:
+                    if type(containers) == dict:
+                        found_listings = int(self.getJsonResult(containers, self.providerConfig['num_listings']))
+                        containers = self.getJsonResult(containers, self.providerConfig['jsonContainer'])
+                    else:
+                        attr_dict = self.getAttr(self.providerConfig['num_listings'])
+                        found_listings_num = self.stringToNumber(self.getContent(soup, attr_dict), self.languageId)
+                        found_listings_num = re.sub('[^0-9]','', found_listings_num)
+                        found_listings = int(found_listings_num)
+                
+                listings_per_page = len(containers)
+                if 'listings_per_page' in self.providerConfig:
+                    if self.providerConfig['listings_per_page'] != '':
+                        try:
+                            listings_per_page = int(self.providerConfig['listings_per_page'])
+                        except:
+                            raise Exception('Parameter "listings_per_page" of config ' + self.providerConfig['provider'] + ' must be a number')
+                if 'maxPageResults' in self.providerConfig:
+                    if self.providerConfig['maxPageResults'] != '':
+                        try:
+                            found_listings = min(int(self.providerConfig['maxPageResults']), found_listings)
+                        except:
+                            raise Exception('Parameter "maxPageResults" of config ' + self.providerConfig['provider'] + ' must be a number')
+                self.listings_per_page = listings_per_page
+                self.maxPageNum  = str(math.ceil(int(found_listings) / int(listings_per_page)))
+                return None
+            else:
                 if type(containers) == dict:
-                    found_listings = int(self.getJsonResult(containers, self.providerConfig['num_listings']))
-                else:
-                    attr_dict = self.getAttr(self.providerConfig['num_listings'])
-                    found_listings_num = self.stringToNumber(self.getContent(soup, attr_dict), self.languageId)
-                    found_listings_num = re.sub('[^0-9]','', found_listings_num)
-                    found_listings = int(found_listings_num)
-            
-            if type(containers) == dict:
-                containers = self.getJsonResult(containers, self.providerConfig['jsonContainer'])    
-            
-            listings_per_page = len(containers)
-            if 'listings_per_page' in self.providerConfig:
-                if self.providerConfig['listings_per_page'] != '':
-                    try:
-                        listings_per_page = int(self.providerConfig['listings_per_page'])
-                    except:
-                        raise Exception('Parameter "listings_per_page" of config ' + self.providerConfig['provider'] + ' must be a number')
-            if 'maxPageResults' in self.providerConfig:
-                if self.providerConfig['maxPageResults'] != '':
-                    try:
-                        found_listings = min(int(self.providerConfig['maxPageResults']), found_listings)
-                    except:
-                        raise Exception('Parameter "maxPageResults" of config ' + self.providerConfig['provider'] + ' must be a number')
-            self.listings_per_page = listings_per_page
-            self.maxPageNum  = str(math.ceil(int(found_listings) / int(listings_per_page)))
+                    containers = self.getJsonResult(containers, self.providerConfig['jsonContainer'])
+                return self.readListings(containers)
         else:
-            return self.readListings(containers)
+            return self.bad_response
         
     def readListings(self, containers):        
         listings = list()
-
+        
         for con in containers:
-
+            
             listing = {}
             for key in self.table_columns.keys():
                 listing[key] = ''
@@ -104,17 +112,19 @@ class Scraper():
             listing['provider'] = self.providerConfig['provider']
             listing['type'] = self.house_type
             listing['active'] = '1'
-
+            
             for key in self.providerConfig['crawlFields'].keys():
                 result = None
                 if type(con) == dict:
                     if self.providerConfig['crawlFields'][key] in con:
-                        result = con[self.providerConfig['crawlFields'][key]]
+                        result = str(con[self.providerConfig['crawlFields'][key]])
                 else:
                     attr_dict = self.getAttr(self.providerConfig['crawlFields'][key])
                     result = self.getContent(con, attr_dict)
                 if result is not None:
                     listing[key] = replaceChrs(result)
+                else:
+                    listing[key] = None
             
             if listing['in_db_since'] == '':
                 listing['in_db_since'] = str(datetime.datetime.now().strftime("%Y-%m-%d"))
@@ -235,20 +245,28 @@ class Scraper():
             if get_tag_content:
                 result = result[attr_dict['child']]
                 if attr_dict['split'] is not None and not attr_dict['raw']:
-                    result = result.text.replace('\n', '').strip()
+                    result = re.sub('\<(.*?)>', ' ', str(result)).replace('\n', '').strip()
+                    # result = result.text.replace('\n', '').strip()
                     result = [i for i in result.split(' ') if i != ''][attr_dict['split']]
                 elif attr_dict['tag_split'] is not None and not attr_dict['raw']:
                     result = result.find_all()[attr_dict['tag_split']]
-                    result = result.text.replace('\n', '').strip()
+                    result = re.sub('\<(.*?)>', ' ', str(result)).replace('\n', '').strip()
+                    # result = result.text.replace('\n', '').strip()
+                    result = [i for i in result.split(' ') if i != ''][attr_dict['split']]
                 elif attr_dict['raw']:
                     result = str(result)
                 else:
-                    result = result.text.replace('\n', '').strip()
+                    result = re.sub('\<(.*?)>', ' ', str(result)).replace('\n', '').strip()
+                    # result = result.text.replace('\n', '').strip()
                     result = ' '.join([i for i in result.split(' ') if i != ''])
         else:
             if attr_dict['attr_val_des'] is not None and attr_dict['tag'] is not None:
                 if 'json' in attr_dict['attr_val_des'] and attr_dict['tag'] == 'script':
-                    result = json.loads(result[attr_dict['child']].text)
+                    if attr_dict['attr_val_des_start']:
+                        result = [r for r in result if r.attrs[attr_dict['attr_name']].startswith(attr_dict['attr_val_des'])]
+                    else:
+                        result = [r for r in result if r.attrs[attr_dict['attr_name']] == attr_dict['attr_val_des']]
+                    result = json.loads(result[attr_dict['child']].string)
             else:
                 if 'top_field' in self.providerConfig:
                     attr_dict_top = self.getAttr(self.providerConfig['top_field'])
@@ -271,6 +289,9 @@ class Scraper():
         return container
     
     def stringToNumber(self, value, languageId):
+        value = value.replace("'", '')
+        value = value.replace("´", '')
+        value = value.replace("`", '')
         if languageId.startswith('de') or languageId.startswith('es') or languageId.startswith('it') or languageId.startswith('fr'):
             value = value.replace('.', '')
             value = value.replace(' ', '')

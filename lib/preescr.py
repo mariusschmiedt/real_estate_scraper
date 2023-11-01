@@ -7,7 +7,7 @@ from .services.writeListing import writeListing
 from .services.getAddress import getAddress
 from .utils import getDatabaseScheme
 
-class FredyRuntime():
+class PReEsCr():
     def __init__(self, providerConfig, metaConfig, url, house_type, table_name, country, base_path, update_prices=False):
         
         # initialize provider information
@@ -39,22 +39,30 @@ class FredyRuntime():
     
     def exe(self, url):
         # scrape listings
-        listings = self._getListings(url)
-        # normalize listings
-        listings = self._normalize(listings)
+        listingResponse = self._getListings(url)
+        if type(listingResponse) == list:
+            # normalize listings
+            listings = self._normalize(listingResponse)
 
-        # filter blacklist listings
-        # listings = self._filter(listings)
-        
-        # normalize address
-        listings = self._normalize_address(listings)
-        
-        # save listings to database
-        self._saveListing(listings)
+            # filter blacklist listings
+            # listings = self._filter(listings)
+            fault_listing = self._validation(listings)
+            
+            if fault_listing is None:
+                # normalize address
+                listings = self._normalize_address(listings)
+                
+                # save listings to database
+                self._saveListing(listings)
 
-        if self.update_prices:
-            # check every active listing if it is still available
-            self.listing_sql.getActiveTableElements()
+                if self.update_prices:
+                    # check every active listing if it is still available
+                    self.listing_sql.getActiveTableElements()
+                return None
+            else:
+                return fault_listing
+        else:
+            return listingResponse
 
     def _getPagination(self):
         mutateUrl = queryStringMutator(self._providerConfig['sortByDateParam'], self._providerConfig['provider'], self._metaConfig['paginate'])
@@ -66,17 +74,26 @@ class FredyRuntime():
         u = url
         if self.ant_required:
             u = transformUrlForScrapingAnt(url, id)
-        self.scraper.scrape(u, get_paginate = True)
-        maxPageNum = self.scraper.maxPageNum
-        listings_per_page = self.scraper.listings_per_page
-        urls = list()
-        for i in range(1, int(maxPageNum)+1):
-            u = mutateUrl.paginationModifier(url, str(i), str(listings_per_page))
-            if self.ant_required:
-                u = transformUrlForScrapingAnt(url, id)
-            urls.append(u)
+        paginationResponse = self.scraper.scrape(u, get_paginate = True)
+        if paginationResponse is None:
+            maxPageNum = self.scraper.maxPageNum
+            listings_per_page = self.scraper.listings_per_page
 
-        return urls
+            urls = list()
+            for page in range(1, int(maxPageNum)+1):
+                u = mutateUrl.paginationModifier(url, str(page), str(listings_per_page))
+                if self.ant_required:
+                    u = transformUrlForScrapingAnt(url, id)
+                urls.append(u)
+
+            if self._providerConfig['provider'] == 'immodirekt_at':
+                search_url = urls[-1]
+                urls = list()
+                urls.append(search_url)
+
+            return urls
+        else:
+            return paginationResponse
 
     def _getListings(self, url):
         return self.scraper.scrape(url)
@@ -84,6 +101,38 @@ class FredyRuntime():
     def _normalize(self, listings):
         return list(map(self._providerConfig['normalize'], listings))
     
+    def _validation(self, listings):
+        fault_listing = {}
+        for listing in listings:
+            if listing['price'] is None:
+                fault_listing['price'] = None
+            
+            if listing['size'] is None:
+                fault_listing['size'] = None
+
+            if listing['rooms'] is None:
+                fault_listing['rooms'] = None
+            
+            if listing['url'] is not None:
+                if listing['url'] == '' or not listing['url'].startswith('http'):
+                    fault_listing['url'] = listing['url']
+            else:
+                fault_listing['url'] = None
+            
+            if listing['provider_id'] is not None:
+                if listing['provider_id'] == '':
+                    fault_listing['provider_id'] = listing['provider_id']
+            else:
+                fault_listing['provider_id'] = None
+
+            if bool(fault_listing):
+                break
+        
+        if bool(fault_listing):
+            return fault_listing
+        else:
+            return None
+
     def _filter(self, listings):
         return list(map(self._providerConfig['filter'], listings))
     

@@ -81,20 +81,21 @@ def getSizeUnit(value):
 
 def findPostalCodeInAddress(address):
     postalcode = ''
-    # split founx address
-    address_split = address.split(' ')
-    # find post code in address
-    for add in address_split:
-        # check if address part is number
-        num = False
-        try:
-            int(add)
-            num = True
-        except:
-            pass
-        # if number has more than 4 digits it is propably a postalcode
-        if len(add) >= 4 and num:
-            postalcode = add
+    if address is not None:
+        # split found address
+        address_split = address.split(' ')
+        # find post code in address
+        for add in address_split:
+            # check if address part is number
+            num = False
+            try:
+                int(add)
+                num = True
+            except:
+                pass
+            # if number has more than 4 digits it is propably a postalcode
+            if len(add) >= 4 and num:
+                postalcode = add
 
     return postalcode
 
@@ -109,5 +110,9 @@ def getNum(value):
         except:
             pass
         if num:
-            new_value = v
+            new_value = str(float(v))
+            if new_value.endswith('.0'):
+                new_value = new_value.replace('.0', '')
+            if new_value.endswith('.'):
+                new_value = new_value.replace('.', '')
     return new_value

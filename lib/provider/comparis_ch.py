@@ -1,5 +1,5 @@
 
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
+from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, getNum
 
 class provider():
     def __init__(self):
@@ -7,7 +7,7 @@ class provider():
 
         self.config = {
             "search_url": None,
-            "crawlContainer": 'script.@type=application/json',
+            "crawlContainer": 'script@type=application/json',
             "jsonContainer": 'props.pageProps.initialResultData.resultItems',
             "sortByDateParam": '',
             "crawlFields": {
@@ -29,8 +29,8 @@ class provider():
         self.metaInformation = {
             "name": 'Comparis',
             "baseUrl": 'https://www.comparis.ch/',
-            "id": 'comparis',
-            "paginate": 'page=',
+            "id": 'comparis_ch',
+            "paginate": '&page=',
         }
 
     def init(self, sourceConfig, blacklist=None):
@@ -58,11 +58,14 @@ class provider():
         
         # address is a list. get the postal code and the city from the list
         if o['address_detected'] is not None:
-            for add in o['address_detected']:
-                o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
-                if o['postalcode'] != '':
-                    o['city'] = add.replace(o['postalcode'], '').strip()
-                    break
+            o['address_detected'] = o['address_detected'].replace('[', '')
+            o['address_detected'] = o['address_detected'].replace(']', '')
+            o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
+            if ',' in o['address_detected']:
+                o['city'] = o['address_detected'].split(',')[-1]
+            else:
+                o['city'] = o['address_detected']
+            o['city'] = o['city'].replace(o['postalcode'], '').strip()
             if type(o['address_detected']) == list:
                 o['address_detected'] = ', '.join(o['address_detected'])
         else:
@@ -70,14 +73,17 @@ class provider():
         
         # find the room from the essential information list
         if o['rooms'] is not None:
-            for ei in o['rooms']:
-                room = replaceRoomAbbr(ei)
-                if room != ei:
-                    o['rooms'] = room
-                    break
+            o['rooms'] = o['rooms'].replace('[', '')
+            o['rooms'] = o['rooms'].replace(']', '')
+            room_split = o['rooms'].split(',')
+            for r in room_split:
+                new_r = replaceRoomAbbr(r)
+                if r != new_r:
+                    o['rooms'] = new_r.strip()            
+            o['rooms'] = getNum(o['rooms'])
         else:
             o['rooms'] = ''
-        
+                
         # remove time from date string
         if o['in_db_since'] is not None:
             o['in_db_since'] = o['in_db_since'].split('T')[0]
@@ -91,12 +97,12 @@ class provider():
         if o['size'] is None:
             o['size'] = ''
         else:
-            o['size'] = str(o['size'])
+            o['size'] = o['size']
         
         if o['price'] is None:
             o['price'] = ''
         else:
-            o['price'] = str(o['price'])
+            o['price'] = o['price']
         
         if o['currency'] is None:
             o['currency'] = ''

@@ -65,7 +65,7 @@ class queryStringMutator():
         return url
     
     def paginationModifier(self, url, page, listings_per_page):
-        if self.provider == 'comparis':
+        if self.provider == 'comparis_ch':
             page = str(int(page) - 1)
             url = url + self.paginateParam + page
         if self.provider == 'findmyhome_at':

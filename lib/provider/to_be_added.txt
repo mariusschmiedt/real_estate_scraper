@@ -1,20 +1,21 @@
-Österreich 
-Mietguru.at
-Immosuchmaschine.at
-immodirekt.at
-
-
 Frankreich 
 leboncoin
-seloger
+seloger.com
 liveonriviera
+pap.fr
+al-in.fr
+logic-immo.com
+bienici.com
+AVendreALouer 
+Figaro Immo
+MaisonsEtAppartements.fr
+
 
 
 test:
-zillow
-homegate
-immoscout_ch
-comparis
+zillow --> Ant
+homegate --> Ant
+immoscout_ch --> Ant
 findmyhome_at
 Immobilienscout24.at
 immobilien.derStandard.at
@@ -22,3 +23,10 @@ Flatbee.at
 Willhaben.at
 Wohnnet.at
 immo.kurier.at
+immodirekt.at
+
+
+
+nicht sicher
+Mietguru.at
+Immosuchmaschine.at

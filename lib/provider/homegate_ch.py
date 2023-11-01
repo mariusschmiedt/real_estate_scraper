@@ -27,7 +27,7 @@ class provider():
         self.metaInformation = {
             "name": 'Homegate',
             "baseUrl": 'http://homegate.ch',
-            "id": 'homegate',
+            "id": 'homegate_ch',
             "paginate": 'ep=',
         }
 

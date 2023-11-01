@@ -29,7 +29,7 @@ class provider():
         self.metaInformation = {
             "name": 'Home.ch',
             "baseUrl": 'https://www.home.ch',
-            "id": 'homech',
+            "id": 'home_ch',
             "paginate": 'pageNum=',
         }
 
