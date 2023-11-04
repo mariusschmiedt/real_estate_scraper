@@ -1,15 +1,6 @@
 import json
 import os
 
-def isOneOf(word, arr):
-    if arr is None:
-        return False
-    else:
-        if len(arr) == 0:
-            return False
-    return word in arr
-
-
 def getProviderConfig(base_path):
     with open(os.path.join(base_path, 'conf/config.json')) as f:
         providerConfig = json.load(f)
@@ -116,3 +107,15 @@ def getNum(value):
             if new_value.endswith('.'):
                 new_value = new_value.replace('.', '')
     return new_value
+
+def numConvert_de(value):
+        comma_count = value.count(',')
+        dot_count = value.count('.')
+
+        if comma_count == 1 and dot_count == 0:
+            value = value.replace(',', '.')
+        elif dot_count >= 1 and comma_count == 1:
+            value = value.replace('.', '').replace(',', '.')
+        elif dot_count >= 1 and comma_count == 0:
+            value = value.replace('.', '')
+        return value

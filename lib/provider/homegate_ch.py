@@ -1,14 +1,14 @@
 import re
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
+from ..utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
 
 class provider():
     def __init__(self):
-        self.appliedBlackList = []
 
         self.config = {
             "search_url": None,
             "crawlContainer": 'div.ResultList_listItem*',
             "sortByDateParam": 'o=dateCreated-desc',
+            "paginate": 'ep=',
             "crawlFields": {
                 "provider_id": '',
                 "price": 'span.HgListingCard_price*',
@@ -21,23 +21,14 @@ class provider():
             "num_listings": 'span.ResultsNumber_results_zTgsG:1s',
             # "listings_per_page": '25',
             "normalize": self.normalize,
-            "filter": self.applyBlacklist,
         }
 
         self.metaInformation = {
             "name": 'Homegate',
             "baseUrl": 'http://homegate.ch',
             "id": 'homegate_ch',
-            "paginate": 'ep=',
         }
 
-    def init(self, sourceConfig, blacklist=None):
-        self.config["enabled"] = sourceConfig["enabled"]
-        self.config["search_url"] = sourceConfig["search_url"]
-        if blacklist is None:
-            blacklist = []
-        self.appliedBlackList = blacklist
-    
     def nullOrEmpty(self, val):
         nullVal = False
         if val == None:
@@ -100,9 +91,6 @@ class provider():
 
         return o
 
-    def applyBlacklist(self, o):
-        return not isOneOf(o['title'], self.appliedBlackList)
-    
     def numConvert(self, value):
         value = value.replace(' ', '')
         value = value.replace('´', '')

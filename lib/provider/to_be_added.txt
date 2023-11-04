@@ -12,11 +12,12 @@ MaisonsEtAppartements.fr
 
 
 
+ZenRows vs Scraping Ant
+
 test:
 zillow --> Ant
 homegate --> Ant
 immoscout_ch --> Ant
-findmyhome_at
 Immobilienscout24.at
 immobilien.derStandard.at
 Flatbee.at

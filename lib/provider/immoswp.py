@@ -1,13 +1,13 @@
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
+from ..utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, numConvert_de
 
 class provider():
     def __init__(self):
-        self.appliedBlackList = []
 
         self.config = {
             "search_url": None,
             "crawlContainer": 'div.item-wrap js-serp-item',
             "sortByDateParam": 's=most_recently_updated_first',
+            "paginate": '&page=',
             "crawlFields": {
                 "provider_id": '@id',
                 "price": 'div.item__spec.item-spec-price',
@@ -19,22 +19,13 @@ class provider():
             "num_listings": 'li.breadcrumb-item active:1s',
             "maxPageResults": '2000',
             "normalize": self.normalize,
-            "filter": self.applyBlacklist,
         }
 
         self.metaInformation = {
             "name": 'Immo Suedwest Presse',
             "baseUrl": 'https://immo.swp.de/',
             "id": 'immoswp',
-            "paginate": '&page=',
         }
-
-    def init(self, sourceConfig, blacklist=None):
-        self.config["enabled"] = sourceConfig["enabled"]
-        self.config["search_url"] = sourceConfig["search_url"]
-        if blacklist is None:
-            blacklist = []
-        self.appliedBlackList = blacklist
 
     def normalize(self, o):
         
@@ -61,9 +52,9 @@ class provider():
         o['rooms'] = replaceRoomAbbr(o['rooms'])
 
         o['provider_id'] = provider_id
-        o['price'] = self.numConvert(o['price'])
-        o['size'] = self.numConvert(o['size'])
-        o['rooms'] = self.numConvert(o['rooms'])
+        o['price'] = numConvert_de(o['price'])
+        o['size'] = numConvert_de(o['size'])
+        o['rooms'] = numConvert_de(o['rooms'])
         o['url'] = self.metaInformation['baseUrl'] + "immobilien/" + provider_id
 
         try:
@@ -72,10 +63,6 @@ class provider():
             pass
         
         return o
-
-    def applyBlacklist(self, o):
-        titleNotBlacklisted = not isOneOf(o['title'], self.appliedBlackList)
-        return titleNotBlacklisted
     
     def numConvert(self, value):
         comma_count = value.count(',')
@@ -83,8 +70,8 @@ class provider():
 
         if comma_count == 1 and dot_count == 0:
             value = value.replace(',', '.')
-        elif dot_count == 1 and comma_count == 1:
+        elif dot_count >= 1 and comma_count == 1:
             value = value.replace('.', '').replace(',', '.')
-        elif dot_count == 1 and comma_count == 0:
+        elif dot_count >= 1 and comma_count == 0:
             value = value.replace('.', '')
         return value

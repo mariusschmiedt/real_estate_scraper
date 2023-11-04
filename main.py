@@ -36,7 +36,6 @@ for prov in provider_list:
                         elif type(response) == dict:
                             problem_keys = ', '.join(['listing[' + key + '] = ' + str(response[key]) for key in response.keys()])
                             problem_string = 'Some crawlFields needs to be adjusted: ' + problem_keys
-                        print(problem_string)
                         break
 
                     if crawler.finishJob:

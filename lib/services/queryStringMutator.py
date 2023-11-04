@@ -69,9 +69,28 @@ class queryStringMutator():
             page = str(int(page) - 1)
             url = url + self.paginateParam + page
         if self.provider == 'findmyhome_at':
-            page = str(int(page) - 1)
-            page = page * listings_per_page
-            url = url + self.paginateParam + page
+            # determine multiply factor
+            page = int(page) - 1
+            # multiply with page entries
+            page = str(int(page) * listings_per_page)
+            # parse param to url format
+            params = dict(urlparse.parse_qsl(self.paginateParam + page))
+            # get url parts
+            url_parts = urlparse.urlparse(url)
+            # get the path from the url
+            old_query = url_parts.query
+            # split the existing query into parts
+            query = dict(urlparse.parse_qsl(old_query))
+            # create a list of the url
+            url_parts = list(url_parts)
+            # find the index of the old query
+            idx = url_parts.index(old_query)
+            # update the query with the params
+            query.update(params)
+            # update the url parts
+            url_parts[idx] = urlencode(query)
+            # get final url
+            url = urlparse.urlunparse(list(url_parts))
         if self.provider == 'immoscout_at' or self.provider == 'derstandard_at':
             if int(page) > 1:
                 url_parts = urlparse.urlparse(url)

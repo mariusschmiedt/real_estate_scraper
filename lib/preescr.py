@@ -33,7 +33,7 @@ class PReEsCr():
         self.address_sql = sqlConnection('address_table', self._base_path, self._database_scheme['address_scheme'])
         self.address_sql.preProcessDbTables()
         # determine if a scraping ant is required
-        self.ant_required = needScrapingAnt(self._metaConfig["id"])
+        self.ant_required = needScrapingAnt(self._providerConfig['provider'])
         # initialize scraper
         self.scraper = Scraper(self._providerConfig, self.ant_required, self._base_path, country, house_type)
     
@@ -44,8 +44,7 @@ class PReEsCr():
             # normalize listings
             listings = self._normalize(listingResponse)
 
-            # filter blacklist listings
-            # listings = self._filter(listings)
+            # validate listings
             fault_listing = self._validation(listings)
             
             if fault_listing is None:
@@ -65,9 +64,9 @@ class PReEsCr():
             return listingResponse
 
     def _getPagination(self):
-        mutateUrl = queryStringMutator(self._providerConfig['sortByDateParam'], self._providerConfig['provider'], self._metaConfig['paginate'])
+        mutateUrl = queryStringMutator(self._providerConfig['sortByDateParam'], self._providerConfig['provider'], self._providerConfig['paginate'])
         url = mutateUrl.urlSortParamModifier(self._providerConfig['search_url'])
-        id = self._metaConfig["id"]
+        id = self._providerConfig['provider']
         if self.ant_required and not isScrapingAntApiKeySet(self._base_path):
             print('Immoscout or Immonet can only be used with if you have set an apikey for scrapingAnt.')
             return
@@ -132,9 +131,6 @@ class PReEsCr():
             return fault_listing
         else:
             return None
-
-    def _filter(self, listings):
-        return list(map(self._providerConfig['filter'], listings))
     
     def _normalize_address(self, listings):
         self.address_sql.openMySQL()

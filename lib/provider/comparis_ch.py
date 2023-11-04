@@ -1,15 +1,15 @@
 
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, getNum
+from ..utils import replaceRoomAbbr, findPostalCodeInAddress, getNum
 
 class provider():
     def __init__(self):
-        self.appliedBlackList = []
 
         self.config = {
             "search_url": None,
             "crawlContainer": 'script@type=application/json',
             "jsonContainer": 'props.pageProps.initialResultData.resultItems',
             "sortByDateParam": '',
+            "paginate": '&page=',
             "crawlFields": {
                 "provider_id": 'AdId',
                 "price": 'PriceValue',
@@ -23,22 +23,13 @@ class provider():
             "num_listings": 'props.pageProps.initialResultData.numberOfResults',
             # "listings_per_page": '25',
             "normalize": self.normalize,
-            "filter": self.applyBlacklist,
         }
 
         self.metaInformation = {
             "name": 'Comparis',
             "baseUrl": 'https://www.comparis.ch/',
             "id": 'comparis_ch',
-            "paginate": '&page=',
         }
-
-    def init(self, sourceConfig, blacklist=None):
-        self.config["enabled"] = sourceConfig["enabled"]
-        self.config["search_url"] = sourceConfig["search_url"]
-        if blacklist is None:
-            blacklist = []
-        self.appliedBlackList = blacklist
     
     def nullOrEmpty(self, val):
         nullVal = False
@@ -121,18 +112,3 @@ class provider():
             pass
 
         return o
-
-    def applyBlacklist(self, o):
-        return not isOneOf(o['title'], self.appliedBlackList)
-    
-    def numConvert(self, value):
-        comma_count = value.count(',')
-        dot_count = value.count('.')
-
-        if comma_count == 1 and dot_count == 0:
-            value = value.replace(',', '.')
-        elif dot_count == 1 and comma_count == 1:
-            value = value.replace('.', '').replace(',', '.')
-        elif dot_count == 1 and comma_count == 0:
-            value = value.replace('.', '')
-        return value

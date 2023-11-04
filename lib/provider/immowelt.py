@@ -1,13 +1,13 @@
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
+from ..utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
 
 class provider():
     def __init__(self):
-        self.appliedBlackList = []
 
         self.config = {
             "search_url": None,
             "crawlContainer": 'div.EstateItem*',
             "sortByDateParam": 'sd=DESC&sf=TIMESTAMP',
+            "paginate": '&sp=',
             "crawlFields": {
                 "provider_id": 'a.mainSection*@id',
                 "price": 'div.@data-test=price',
@@ -18,22 +18,13 @@ class provider():
             },
             "num_listings": 'h1.MatchNumber-a225f:1s',
             "normalize": self.normalize,
-            "filter": self.applyBlacklist,
         }
 
         self.metaInformation = {
             "name": 'Immowelt',
             "baseUrl": 'https://www.immowelt.de/',
             "id": 'immowelt',
-            "paginate": '&sp=',
         }
-
-    def init(self, sourceConfig, blacklist=None):
-        self.config["enabled"] = sourceConfig["enabled"]
-        self.config["search_url"] = sourceConfig["search_url"]
-        if blacklist is None:
-            blacklist = []
-        self.appliedBlackList = blacklist
 
     def normalize(self, o):
         
@@ -64,10 +55,6 @@ class provider():
         except:
             pass
         return o
-
-    def applyBlacklist(self, o):
-      titleNotBlacklisted = not isOneOf(o['title'], self.appliedBlackList)
-      return titleNotBlacklisted
     
     def numConvert(self, value):
         comma_count = value.count(',')
@@ -75,6 +62,7 @@ class provider():
 
         if comma_count == 1 and dot_count == 0:
             value = value.replace(',', '.')
-        elif dot_count == 1 and comma_count == 1:
+        elif dot_count  >= 1 and comma_count == 1:
             value = value.replace('.', '').replace(',', '.')
+        
         return value

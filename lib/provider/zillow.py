@@ -1,15 +1,15 @@
 
 import re
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
+from ..utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
 
 class provider():
     def __init__(self):
-        self.appliedBlackList = []
 
         self.config = {
             "search_url": None,
             "crawlContainer": 'li.ListItem*',
             "sortByDateParam": '"sort":{"value":"days"}}',
+            "paginate": ' "pagination":{"currentPage":}',
             "crawlFields": {
                 "provider_id": 'article.StyledPropertyCard*@id',
                 "price": 'span.PropertyCardWrapper*',
@@ -22,23 +22,14 @@ class provider():
             "num_listings": 'span.result-count',
             # "listings_per_page": '25',
             "normalize": self.normalize,
-            "filter": self.applyBlacklist,
         }
 
         self.metaInformation = {
             "name": 'Zillow',
             "baseUrl": 'https://www.zillow.com',
             "id": 'zillow',
-            "paginate": ' "pagination":{"currentPage":}',
         }
 
-    def init(self, sourceConfig, blacklist=None):
-        self.config["enabled"] = sourceConfig["enabled"]
-        self.config["search_url"] = sourceConfig["search_url"]
-        if blacklist is None:
-            blacklist = []
-        self.appliedBlackList = blacklist
-    
     def nullOrEmpty(self, val):
         nullVal = False
         if val == None:
@@ -98,9 +89,6 @@ class provider():
             pass
 
         return o
-
-    def applyBlacklist(self, o):
-        return not isOneOf(o['title'], self.appliedBlackList)
     
     def numConvert(self, value):
 

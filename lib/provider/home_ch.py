@@ -1,15 +1,15 @@
 
 import re
-from ..utils import isOneOf, replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
+from ..utils import replaceSizeUnit, replaceRoomAbbr, getSizeUnit, findPostalCodeInAddress
 
 class provider():
     def __init__(self):
-        self.appliedBlackList = []
 
         self.config = {
             "search_url": None,
             "crawlContainer": 'a.row search-results__list__item*',
             "sortByDateParam": 'sort=dd',
+            "paginate": 'pageNum=',
             "crawlFields": {
                 "provider_id": 'a.row search-results__list__item@data-gtm-id',
                 "price": 'span.price-tag__amount',
@@ -23,23 +23,14 @@ class provider():
             "num_listings": 'h2.h4 search-results__subheadline*',
             # "listings_per_page": '25',
             "normalize": self.normalize,
-            "filter": self.applyBlacklist,
         }
 
         self.metaInformation = {
             "name": 'Home.ch',
             "baseUrl": 'https://www.home.ch',
             "id": 'home_ch',
-            "paginate": 'pageNum=',
         }
 
-    def init(self, sourceConfig, blacklist=None):
-        self.config["enabled"] = sourceConfig["enabled"]
-        self.config["search_url"] = sourceConfig["search_url"]
-        if blacklist is None:
-            blacklist = []
-        self.appliedBlackList = blacklist
-    
     def nullOrEmpty(self, val):
         nullVal = False
         if val == None:
@@ -89,9 +80,6 @@ class provider():
 
         return o
 
-    def applyBlacklist(self, o):
-        return not isOneOf(o['title'], self.appliedBlackList)
-    
     def numConvert(self, value):
 
         value = value.replace("'", '')
