@@ -68,7 +68,7 @@ class queryStringMutator():
         if self.provider == 'comparis_ch':
             page = str(int(page) - 1)
             url = url + self.paginateParam + page
-        if self.provider == 'findmyhome_at':
+        elif self.provider == 'findmyhome_at':
             # determine multiply factor
             page = int(page) - 1
             # multiply with page entries
@@ -91,7 +91,7 @@ class queryStringMutator():
             url_parts[idx] = urlencode(query)
             # get final url
             url = urlparse.urlunparse(list(url_parts))
-        if self.provider == 'immoscout_at' or self.provider == 'derstandard_at':
+        elif self.provider == 'immoscout_at' or self.provider == 'derstandard_at':
             if int(page) > 1:
                 url_parts = urlparse.urlparse(url)
                 # get the path from the url
@@ -105,7 +105,7 @@ class queryStringMutator():
                 url_parts[idx] = new_path
                 # cretae url
                 url = urlparse.urlunparse(list(url_parts))
-        if self.provider == 'kleinanzeigen':
+        elif self.provider == 'kleinanzeigen':
             # get url components
             url_parts = urlparse.urlparse(url)
             # get old path

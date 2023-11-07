@@ -30,15 +30,6 @@ class provider():
             "baseUrl": 'https://www.comparis.ch/',
             "id": 'comparis_ch',
         }
-    
-    def nullOrEmpty(self, val):
-        nullVal = False
-        if val == None:
-            nullVal = True
-        else:
-            if len(val) == 0:
-                nullVal = True
-        return nullVal
 
     def normalize(self, o):
         o["provider_id"] = str(o["provider_id"])
@@ -48,7 +39,7 @@ class provider():
         o['url'] = url
         
         # address is a list. get the postal code and the city from the list
-        if o['address_detected'] is not None:
+        if o['address_detected'] != '':
             o['address_detected'] = o['address_detected'].replace('[', '')
             o['address_detected'] = o['address_detected'].replace(']', '')
             o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
@@ -63,7 +54,7 @@ class provider():
             o['address_detected'] = ''
         
         # find the room from the essential information list
-        if o['rooms'] is not None:
+        if o['rooms'] != '':
             o['rooms'] = o['rooms'].replace('[', '')
             o['rooms'] = o['rooms'].replace(']', '')
             room_split = o['rooms'].split(',')
@@ -76,30 +67,13 @@ class provider():
             o['rooms'] = ''
                 
         # remove time from date string
-        if o['in_db_since'] is not None:
+        if o['in_db_since'] != '':
             o['in_db_since'] = o['in_db_since'].split('T')[0]
         else:
             o['in_db_since'] = ''
         
         # set size unit
         o['size_unit'] = 'm^2'
-        
-        # normalize values
-        if o['size'] is None:
-            o['size'] = ''
-        else:
-            o['size'] = o['size']
-        
-        if o['price'] is None:
-            o['price'] = ''
-        else:
-            o['price'] = o['price']
-        
-        if o['currency'] is None:
-            o['currency'] = ''
-        
-        if o['title'] is None:
-            o['title'] = ''
         
         
         # if the rooms could not be found reset the value

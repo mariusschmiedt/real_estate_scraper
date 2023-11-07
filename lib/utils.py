@@ -32,9 +32,10 @@ def replaceRoomAbbr(value):
     return replaceArray(value, ['Zimmer', 'Zi.', 'Zi', 'Rooms', 'Ro'])
 
 def replaceArray(value, array):
-    for arr in array:
-        if arr in value:
-            value = value.replace(arr, '').strip()
+    if array is not None:
+        for arr in array:
+            if arr in value:
+                value = value.replace(arr, '').strip()
     return value
 
 def replaceChrs(value):

@@ -29,15 +29,6 @@ class provider():
             "id": 'wohnnet_at',
         }
 
-    def nullOrEmpty(self, val):
-        nullVal = False
-        if val == None:
-            nullVal = True
-        else:
-            if len(val) == 0:
-                nullVal = True
-        return nullVal
-
     def normalize(self, o):
         o['address_detected'] = o['address_detected'].replace(o['title'], '').strip()
 

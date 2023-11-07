@@ -7,19 +7,19 @@ class provider():
         self.config = {
             "search_url": None,
             "crawlContainer": 'li.Item-item-J04',
+            "crawlContainer2": 'li.Item-item-S33',
             "sortByDateParam": 'aktualitaet',
             "paginate": 'seite-',
             "crawlFields": {
-                "provider_id": 'a.Item-item__link-pTS@href',
-                "price": 'li.Text-color-gray-dark-wi_ Text-size-s-KGp Text-bold-t5X',
+                "provider_id": 'a.Item-item__link*@href',
+                "price": 'li.Text-color-gray-dark-wi_*',
                 "size": 'li.w-full mb-0 mt-0 mr-0*:1c',
                 "rooms": 'li.w-full mb-0 mt-0 mr-0*:2c',
-                "title": 'h2.Text-color-gray-dark-wi_ Text-size-standard-X2v Text-clamp-lines-1-SVo',
-                "url": 'a.Item-item__link-pTS@href',
+                "title": 'h2.Text-color-gray-dark-wi_*',
+                "url": 'a.Item-item__link*@href',
                 "address_detected": 'address.Item-item__address*',
             },
             "num_listings": 'h2.Headline-sub-headline-N14',
-            # "listings_per_page": '25',
             "normalize": self.normalize,
         }
 
@@ -28,15 +28,6 @@ class provider():
             "baseUrl": 'https://www.immobilienscout24.at/',
             "id": 'immoscout_at',
         }
-
-    def nullOrEmpty(self, val):
-        nullVal = False
-        if val == None:
-            nullVal = True
-        else:
-            if len(val) == 0:
-                nullVal = True
-        return nullVal
 
     def normalize(self, o):
 

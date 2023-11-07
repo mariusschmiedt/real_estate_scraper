@@ -26,6 +26,9 @@ class PReEsCr():
         self.listing_sql = sqlConnection(table_name, self._base_path, self._database_scheme['listing_scheme'])
         # set indices of listing table
         self.listing_sql.preProcessDbTables()
+        if self.update_prices:
+            # check every active listing if it is still available
+            self.listing_sql.getActiveTableElements()
         # create instance to write listings to database
         self.list_write = writeListing(self.listing_sql, update_prices)
         self.finishJob = self.list_write.finish
@@ -43,7 +46,6 @@ class PReEsCr():
         if type(listingResponse) == list:
             # normalize listings
             listings = self._normalize(listingResponse)
-
             # validate listings
             fault_listing = self._validation(listings)
             
@@ -53,10 +55,6 @@ class PReEsCr():
                 
                 # save listings to database
                 self._saveListing(listings)
-
-                if self.update_prices:
-                    # check every active listing if it is still available
-                    self.listing_sql.getActiveTableElements()
                 return None
             else:
                 return fault_listing

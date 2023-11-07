@@ -7,7 +7,7 @@ from random import randint
 def getAddress(listing, country, sql):
     # get address string of offer
     address = listing['address_detected']
-    
+
     # initialize address parts
     postalcode = ''
     state = ''
@@ -22,12 +22,12 @@ def getAddress(listing, country, sql):
         postalcode = listing['postalcode']
     
     # if a postcode have been found define new address string e.g. 70597, Germany
-    if postalcode != '' and city == '':
+    if postalcode != '':
         address = postalcode + ', ' + country
     if postalcode == '' and city != '':
         address = city + ', ' + country
-    if postalcode != '' and city != '':
-        address = postalcode + ' ' + city + ', ' + country
+    # if postalcode != '' and city != '':
+    #     address = postalcode + ' ' + city + ', ' + country
     # if the country was not in the found address string add it to the existing one e.g. 70597 Stuttgart, Germany
     if country.lower() not in address.lower():
         address = address + ', ' + country
@@ -44,19 +44,6 @@ def getAddress(listing, country, sql):
             state = found_state[1].strip()
             city = found_state[2].strip()
             district = found_state[3].strip()
-
-    # if the address has not been found but the city and district is expected to be known from the address string
-    if address_id == '' and city != '' and country != '':
-        found_states = []
-        if district != '':
-            found_states = sql.querySql("SELECT id, state, postalcode FROM address_table WHERE city='" + city + "' AND country='" + country + "' AND district='" + district + "'")
-        else:
-            found_states = sql.querySql("SELECT id, state, postalcode FROM address_table WHERE city='" + city + "' AND country='" + country + "'")
-        if len(found_states) == 1:
-            found_state = found_states[0]
-            address_id = str(found_state[0])
-            state = found_state[1].strip()
-            postalcode = found_state[2].strip()
     
     # if the address of the address string have not been stored in the database or could not been found use geopy
     if state == '' or city == '' or postalcode == '':
@@ -108,11 +95,11 @@ def getAddress(listing, country, sql):
                 city = rev_city
             if district == '' and rev_district != '':
                 district = rev_district
-        
+
         # update database if something is new
         if country != '' and postalcode != '' and state != '' and city != '':
             # check if with the new information an address id can be found
-            found_states = sql.querySql("SELECT id FROM address_table WHERE postalcode='" + postalcode + "' AND country='" + country + "'")
+            found_states = sql.querySql("SELECT id FROM address_table WHERE country='" + country + "' AND postalcode='" + postalcode + "' AND state='" + state + "' AND city='" + city +"'")
             if len(found_states) > 0:
                 found_state = found_states[0]
                 address_id = str(found_state[0])
@@ -125,6 +112,7 @@ def getAddress(listing, country, sql):
                 if len(found_states) > 0:
                     found_state = found_states[0]
                     address_id = str(found_state[0])
+
                 # if the id is still not available leave the district open
                 if address_id == '':
                     found_states = sql.querySql("SELECT id FROM address_table WHERE country='" + country + "' AND postalcode='" + postalcode + "' AND state='" + state + "' AND city='" + city +"'")

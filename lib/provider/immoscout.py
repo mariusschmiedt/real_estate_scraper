@@ -29,15 +29,6 @@ class provider():
             "id": 'immoscout',
         }
 
-    def nullOrEmpty(self, val):
-        nullVal = False
-        if val == None:
-            nullVal = True
-        else:
-            if len(val) == 0:
-                nullVal = True
-        return nullVal
-
     def normalize(self, o):
         url = self.metaInformation['baseUrl'] + o["url"].replace(o["url"][0:o["url"].index("/expose")+1], '')
 

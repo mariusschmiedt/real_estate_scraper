@@ -29,15 +29,6 @@ class provider():
             "id": 'immodirekt_at',
         }
 
-    def nullOrEmpty(self, val):
-        nullVal = False
-        if val == None:
-            nullVal = True
-        else:
-            if len(val) == 0:
-                nullVal = True
-        return nullVal
-
     def normalize(self, o):
         o['provider_id'] =  o['provider_id'].split('-')[-1].replace('/', '').strip()
         o['url'] = self.metaInformation['baseUrl'][0:-1] + o["url"]

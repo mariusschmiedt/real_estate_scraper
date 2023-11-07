@@ -29,10 +29,9 @@ for prov in provider_list:
                 for url_idx in range(len(urls))[0:maxPageNum]:
                     start_time = time.time()
                     response = crawler.exe(urls[url_idx])
-
                     if response is not None:
                         if type(response) == str:
-                            problem_string = 'Scraper seems to got blocked. ' + (url_idx + 1) + ' pages could get analyzed before being blocked\n\n'
+                            problem_string = 'Scraper seems to got blocked. ' + str(url_idx + 1) + ' pages could get analyzed before being blocked\n\n'
                         elif type(response) == dict:
                             problem_keys = ', '.join(['listing[' + key + '] = ' + str(response[key]) for key in response.keys()])
                             problem_string = 'Some crawlFields needs to be adjusted: ' + problem_keys

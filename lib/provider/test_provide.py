@@ -181,9 +181,9 @@ def numConvert(value):
     dot_count = value.count('.')
     if comma_count == 1 and dot_count == 0:
         value = value.replace(',', '.')
-    elif dot_count == 1 and comma_count == 1:
+    elif dot_count >= 1 and comma_count == 1:
         value = value.replace('.', '').replace(',', '.')
-    elif dot_count == 1 and comma_count == 0:
+    elif dot_count >= 1 and comma_count == 0:
         value = value.replace('.', '')
     return value
 
@@ -201,9 +201,8 @@ def getNum(value):
             new_value = v
     return new_value
 
+
 def normalize(o):
-    o['provider_id'] =  o['provider_id'].split('-')[-1].replace('/', '').strip()
-    o['url'] = 'https://www.immodirekt.at/'[0:-1] + o["url"]
     o['postalcode'] = ''
     for add in o['address_detected'].split(' '):
         num = False
@@ -214,23 +213,24 @@ def normalize(o):
             pass
         if num and len(add) >=4:
             o['postalcode'] = add
+    if ',' in o['address_detected']:
+        o['city'] = o['address_detected'].split(',')[-1].strip()
+    else:
+        o['city'] = o['address_detected']
     if o['postalcode'] != '':
-        o['city'] = o['address_detected'].replace(o['postalcode'], '').strip()
-    if ',' in o['city']:
-        o['city'] = o['city'].split(',')[0].strip()
+        o['city'] = o['city'].replace(o['postalcode'], '').strip() 
+    o['url'] = 'https://www.immobilienscout24.at/'[0:-1] + o["url"]
+    o['provider_id'] = o['provider_id'].replace('expose', '').replace('/', '')
     if '&euro;' in o['price'] or '€' in o['price']:
         o['currency'] = 'EUR'
     o['price'] = o['price'].replace('&euro;', '').replace('€', '').replace(',-', '').strip()
-    o['price'] = numConvert(o['price'])
-    o['price'] = getNum(o['price'])
     if 'm²' in o['size'] or 'm2' in o['size']:
         o['size_unit'] ='m^2'
     o['size'] = o['size'].replace('m²', '').replace('m2', '').strip()
-    o['size'] = numConvert(o['size'])
-    o['size'] = getNum(o['size'])
     o['rooms'] = o['rooms'].replace('Zimmer', '').replace('Zi', '').strip()
+    o['price'] = numConvert(o['price'])
+    o['size'] = numConvert(o['size'])
     o['rooms'] = numConvert(o['rooms'])
-    o['rooms'] = getNum(o['rooms'])
     try:
         o['price_per_space'] = str(round((float(o['price']) / float(o['size'])), 2))
     except:
@@ -239,19 +239,20 @@ def normalize(o):
 
 config = {
     "search_url": None,
-    "crawlContainer": 'section.VKFkO _3swN3',
-    "sortByDateParam": 'sort=LATEST',
+    "crawlContainer": 'li.Item-item-J04',
+    "sortByDateParam": 'aktualitaet',
+    "paginate": 'seite-',
     "crawlFields": {
-        "provider_id": 'a@href',
-        "price": 'div._1-CSS:3c',
-        "size": 'div._1-CSS:2c',
-        "rooms": 'div._1-CSS:1c',
-        "title": 'h2._2jNcY',
-        "url": 'a@href',
-        "address_detected": 'p._1FDvH',
+        "provider_id": 'a.Item-item__link-pTS@href',
+        "price": 'li.Text-color-gray-dark-wi_ Text-size-s-KGp Text-bold-t5X',
+        "size": 'li.w-full mb-0 mt-0 mr-0*:1c',
+        "rooms": 'li.w-full mb-0 mt-0 mr-0*:2c',
+        "title": 'h2.Text-color-gray-dark-wi_ Text-size-standard-X2v Text-clamp-lines-1-SVo',
+        "url": 'a.Item-item__link-pTS@href',
+        "address_detected": 'address.Item-item__address*',
     },
-    "num_listings": 'h1._3fslm:1s',
-    "maxPageResults": '500',
+    "num_listings": 'h2.Headline-sub-headline-N14',
+    # "listings_per_page": '25',
 }
 
 # soup = BeautifulSoup(page_content,'html5lib')
@@ -287,7 +288,7 @@ for key in config['crawlFields'].keys():
 for key in listing.keys():
     print(key + ': ' + str(listing[key]))
 
-listing = normalize(listing)
+listing_norm = normalize(listing)
 
-for key in listing.keys():
-    print(key + ': ' + str(listing[key]))
+for key in listing_norm.keys():
+    print(key + ': ' + str(listing_norm[key]))

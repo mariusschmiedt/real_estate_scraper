@@ -18,7 +18,7 @@ test:
 zillow --> Ant
 homegate --> Ant
 immoscout_ch --> Ant
-Immobilienscout24.at
+Immobilienscout24.at --> Response ist kürzer als HTML aber parsen funktioniert
 immobilien.derStandard.at
 Flatbee.at
 Willhaben.at

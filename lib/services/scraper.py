@@ -1,3 +1,4 @@
+import os
 import re
 import requests
 import math
@@ -20,7 +21,7 @@ class Scraper():
         self.database_schemes = getDatabaseScheme(base_path)
         self.table_columns = self.database_schemes['listing_scheme']
         self.house_type = house_type
-
+        self.base_path=base_path
         user_agents_list = [
             'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.85 Safari/537.36',
             'Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
@@ -56,9 +57,20 @@ class Scraper():
             response = session.get(url, headers=self.headers, cookies=self.driver.cookies)
             page_content = response.text
         
+        # log_path = os.path.join(self.base_path, 'logs/test.html')
+        # with open(log_path, 'w') as file:
+        #     file.write(page_content)
+
         soup = BeautifulSoup(page_content,'html5lib')
         attr_dict = self.getAttr(self.providerConfig['crawlContainer'])
         containers = self.getContent(soup, attr_dict, get_container=True)
+
+        if 'crawlContainer2' in self.providerConfig:
+            attr_dict = self.getAttr(self.providerConfig['crawlContainer2'])
+            containers2 = self.getContent(soup, attr_dict, get_container=True)
+            if containers2 is not None:
+                containers = containers + containers2
+
         
         if containers is None:
             self.blocked = True
@@ -120,11 +132,14 @@ class Scraper():
                         result = str(con[self.providerConfig['crawlFields'][key]])
                 else:
                     attr_dict = self.getAttr(self.providerConfig['crawlFields'][key])
-                    result = self.getContent(con, attr_dict)
+                    try:
+                        result = self.getContent(con, attr_dict)
+                    except:
+                        pass
                 if result is not None:
                     listing[key] = replaceChrs(result)
                 else:
-                    listing[key] = None
+                    listing[key] = ''
             
             if listing['in_db_since'] == '':
                 listing['in_db_since'] = str(datetime.datetime.now().strftime("%Y-%m-%d"))

@@ -29,15 +29,6 @@ class provider():
             "id": 'homegate_ch',
         }
 
-    def nullOrEmpty(self, val):
-        nullVal = False
-        if val == None:
-            nullVal = True
-        else:
-            if len(val) == 0:
-                nullVal = True
-        return nullVal
-
     def normalize(self, o):
 
         o['postalcode'] = findPostalCodeInAddress(o['address_detected'])
