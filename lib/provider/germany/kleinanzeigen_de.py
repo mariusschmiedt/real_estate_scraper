@@ -1,5 +1,5 @@
 
-from ..utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, numConvert_de
+from ...utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, numConvert_de
 
 class provider():
     def __init__(self):
@@ -26,7 +26,7 @@ class provider():
         self.metaInformation = {
             "name": 'Kleinanzeigen',
             "baseUrl": 'https://www.kleinanzeigen.de/',
-            "id": 'kleinanzeigen',
+            "id": 'kleinanzeigen_de',
         }
 
     def normalize(self, o):

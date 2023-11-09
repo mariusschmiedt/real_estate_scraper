@@ -1,5 +1,5 @@
 import re
-from ..utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, getNum, numConvert_de
+from ...utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, getNum, numConvert_de
 
 class provider():
     def __init__(self):
@@ -19,7 +19,7 @@ class provider():
                 "address_detected": 'div.item__locality',
             },
             "num_listings": 'li.breadcrumb-item active:1s',
-            # "listings_per_page": '25',
+            "maxPageResults": '2000',
             "normalize": self.normalize,
         }
 

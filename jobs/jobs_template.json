@@ -2,51 +2,43 @@
   "immoscout": {
     "apartement_rent": {
       "url": "https://www.immobilienscout24.de/Suche/de/wohnung-mieten",
-      "enabled": true,
-      "country": "Germany",
-      "number_format": "Germany"
+      "country": "Germany"
     }
   },
   "kleinanzeigen": {
     "apartement_buy": {
       "url": "https://www.kleinanzeigen.de/s-stuttgart/eigentumswohnung/k0l9280",
-      "enabled": true,
-      "country": "Germany",
-      "number_format": "Germany"
+      "country": "Germany"
     }
   },
   "immoswp": {
     "apartement_rent": {
       "url": "https://immo.swp.de/suchergebnisse?l=Deutschland&r=0km&a=&t=apartment%3Arental%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
-      "enabled": true,
-      "country": "Germany",
-      "number_format": "Germany"
+      "country": "Germany"
     },
     "house_rent": {
       "url": "https://immo.swp.de/suchergebnisse?l=Deutschland&r=0km&a=&t=house%3Arental%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
-      "enabled": true,
-      "country": "Germany",
-      "number_format": "Germany"
+      "country": "Germany"
     },
     "apartement_buy": {
       "url": "https://immo.swp.de/suchergebnisse?l=Deutschland&r=0km&a=&t=apartment%3Asale%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
-      "enabled": true,
-      "country": "Germany",
-      "number_format": "Germany"
+      "country": "Germany"
     },
     "house_buy": {
       "url": "https://immo.swp.de/suchergebnisse?l=Deutschland&r=0km&a=&t=house%3Asale%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
-      "enabled": true,
-      "country": "Germany",
-      "number_format": "Germany"
+      "country": "Germany"
     }
   },
   "immowelt": {
     "apartement_rent": {
       "url": "https://www.immowelt.de/suche/stuttgart/wohnungen/mieten?d=true",
-      "enabled": true,
-      "country": "Germany",
-      "number_format": "United Kingdom"
+      "country": "Germany"
+    }
+  },
+  "immo_kurier_at": {
+    "apartement_buy": {
+      "url": "https://immo.kurier.at/suche?l=Wien&r=0km&_multiselect_r=0km&a=at.wien&t=apartment%3Asale%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "country": "Austria"
     }
   }
 }

@@ -19,9 +19,7 @@ To determine which real estate platform/s should be scraped a job has to be set 
   "kleinanzeigen": {
     "apartement_buy": {
       "url": "https://www.kleinanzeigen.de/s-stuttgart/eigentumswohnung/k0l9280",
-      "enabled": true,
-      "country": "Germany",
-      "number_format": "Germany"
+      "country": "Germany"
     }
   }
 }
@@ -34,17 +32,13 @@ or for multiple jobs
   "immoscout": {
     "apartement_rent": {
       "url": "https://www.immobilienscout24.de/Suche/de/wohnung-mieten",
-      "enabled": true,
-      "country": "Germany",
-      "number_format": "Germany"
+      "country": "Germany"
     }
   },
   "kleinanzeigen": {
     "apartement_buy": {
       "url": "https://www.kleinanzeigen.de/s-stuttgart/eigentumswohnung/k0l9280",
-      "enabled": true,
-      "country": "Germany",
-      "number_format": "Germany"
+      "country": "Germany"
     }
   }
 }

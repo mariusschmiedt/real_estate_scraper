@@ -1,4 +1,4 @@
-from ..utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, numConvert_de
+from ...utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, numConvert_de
 
 class provider():
     def __init__(self):
@@ -7,7 +7,7 @@ class provider():
             "search_url": None,
             "crawlContainer": 'div.item-wrap js-serp-item',
             "sortByDateParam": 's=most_recently_updated_first',
-            "paginate": '&page=',
+            "paginate": 'page=',
             "crawlFields": {
                 "provider_id": '@id',
                 "price": 'div.item__spec.item-spec-price',
@@ -24,7 +24,7 @@ class provider():
         self.metaInformation = {
             "name": 'Immo Suedwest Presse',
             "baseUrl": 'https://immo.swp.de/',
-            "id": 'immoswp',
+            "id": 'immoswp_de',
         }
 
     def normalize(self, o):

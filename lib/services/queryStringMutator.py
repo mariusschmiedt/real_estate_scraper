@@ -34,6 +34,8 @@ class queryStringMutator():
             idx = url_parts.index(old_path)
             # replace the old path with the new one
             url_parts[idx] = new_path
+            # unparse list to new url
+            url = urlparse.urlunparse(list(url_parts))
         elif self.provider == 'immoscout_at':
             # get the path from the url
             old_path = url_parts.path
@@ -44,54 +46,38 @@ class queryStringMutator():
             idx = url_parts.index(old_path)
             # replace the old path with the new one
             url_parts[idx] = new_path
+            # unparse list to new url
+            url = urlparse.urlunparse(list(url_parts))
         else:
             # parse param to url format
             params = dict(urlparse.parse_qsl(self.sortByDateParam))
             # get the query from the url
             old_query = url_parts.query
-            # split the existing query into parts
-            query = dict(urlparse.parse_qsl(old_query))
-            # create a list of the url
-            url_parts = list(url_parts)
-            # find the index of the old query
-            idx = url_parts.index(old_query)
-            # update the query with the params
-            query.update(params)
-            # update the url parts
-            url_parts[idx] = urlencode(query)
-        # unparse list to new url
-        url = urlparse.urlunparse(list(url_parts))
-
+            if old_query == '':
+                url = url + '?' + self.sortByDateParam
+            else:
+                # split the existing query into parts
+                query = dict(urlparse.parse_qsl(old_query))
+                # create a list of the url
+                url_parts = list(url_parts)
+                # find the index of the old query
+                idx = url_parts.index(old_query)
+                # update the query with the params
+                query.update(params)
+                # update the url parts
+                url_parts[idx] = urlencode(query)
+                # unparse list to new url
+                url = urlparse.urlunparse(list(url_parts))
+        
         return url
     
     def paginationModifier(self, url, page, listings_per_page):
         if self.provider == 'comparis_ch':
             page = str(int(page) - 1)
-            url = url + self.paginateParam + page
         elif self.provider == 'findmyhome_at':
-            # determine multiply factor
-            page = int(page) - 1
-            # multiply with page entries
-            page = str(int(page) * listings_per_page)
-            # parse param to url format
-            params = dict(urlparse.parse_qsl(self.paginateParam + page))
-            # get url parts
-            url_parts = urlparse.urlparse(url)
-            # get the path from the url
-            old_query = url_parts.query
-            # split the existing query into parts
-            query = dict(urlparse.parse_qsl(old_query))
-            # create a list of the url
-            url_parts = list(url_parts)
-            # find the index of the old query
-            idx = url_parts.index(old_query)
-            # update the query with the params
-            query.update(params)
-            # update the url parts
-            url_parts[idx] = urlencode(query)
-            # get final url
-            url = urlparse.urlunparse(list(url_parts))
-        elif self.provider == 'immoscout_at' or self.provider == 'derstandard_at':
+            page = str((int(page) - 1)  * listings_per_page)
+        
+        if self.provider == 'immoscout_at' or self.provider == 'derstandard_at':
             if int(page) > 1:
                 url_parts = urlparse.urlparse(url)
                 # get the path from the url
@@ -126,5 +112,24 @@ class queryStringMutator():
             # unparse list to new url
             url = urlparse.urlunparse(list(url_parts))
         else:
-            url = url + self.paginateParam + page
+            url_parts = urlparse.urlparse(url)
+            # parse param to url format
+            params = dict(urlparse.parse_qsl(self.paginateParam + page))
+            # get the query from the url
+            old_query = url_parts.query
+            if old_query == '':
+                url = url + '?' + self.sortByDateParam
+            else:
+                # split the existing query into parts
+                query = dict(urlparse.parse_qsl(old_query))
+                # create a list of the url
+                url_parts = list(url_parts)
+                # find the index of the old query
+                idx = url_parts.index(old_query)
+                # update the query with the params
+                query.update(params)
+                # update the url parts
+                url_parts[idx] = urlencode(query)
+                # unparse list to new url
+                url = urlparse.urlunparse(list(url_parts))
         return url

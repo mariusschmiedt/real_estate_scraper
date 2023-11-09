@@ -1,6 +1,6 @@
 
 import re
-from ..utils import replaceSizeUnit, replaceRoomAbbr, getSizeUnit, findPostalCodeInAddress
+from ...utils import replaceSizeUnit, replaceRoomAbbr, getSizeUnit, findPostalCodeInAddress
 
 class provider():
     def __init__(self):

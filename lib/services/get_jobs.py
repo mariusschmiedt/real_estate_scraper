@@ -1,46 +1,44 @@
+import os
+import json
+
+def getJob(provider_name, search_type, base_path):
+    with open(os.path.join(base_path, 'jobs/jobs.json')) as f:
+        jobs = json.load(f)
+
+    house_type = None
+    table_name = None
+    offer_type = None
+    if search_type == 'apartement_rent':
+        house_type = 'apartement'
+        table_name = 'rent_homes'
+        offer_type = 'rent'
+    if search_type == 'house_rent':
+        house_type = 'house'
+        table_name = 'rent_homes'
+        offer_type = 'rent'
+    if search_type == 'apartement_buy':
+        house_type = 'apartement'
+        table_name = 'buy_homes'
+        offer_type = 'buy'
+    if search_type == 'house_buy':
+        house_type = 'house'
+        table_name = 'buy_homes'
+        offer_type = 'buy'
+    
+    if house_type is None or table_name is None or offer_type is None:
+        raise Exception('Job search criteria not defined correctly.')
 
 
-def getJobs(jobs, provider_name):
-    job_list = list()
-    for job in jobs[provider_name].keys():
-        provider_types = jobs[provider_name][job]
-        house_type = None
-        table_name = None
-        offer_type = None
-        country = None
-        url = None
-        number_format = None
-        if job == 'apartement_rent':
-            house_type = 'apartement'
-            table_name = 'rent_homes'
-            offer_type = 'rent'
-        if job == 'house_rent':
-            house_type = 'house'
-            table_name = 'rent_homes'
-            offer_type = 'rent'
-        if job == 'apartement_buy':
-            house_type = 'apartement'
-            table_name = 'buy_homes'
-            offer_type = 'buy'
-        if job == 'house_buy':
-            house_type = 'house'
-            table_name = 'buy_homes'
-            offer_type = 'buy'
-        if 'url' in provider_types.keys():
-            url = provider_types['url']
-        if 'country' in provider_types.keys():
-            country = provider_types['country']
-        if 'number_format' in provider_types.keys():
-            number_format = provider_types['number_format']
-        job_dict = {
-            "url": url,
-            "house_type": house_type,
-            "table_name": table_name,
-            "country": country,
-            "number_format": number_format,
-            "offer_type": offer_type
-        }
-        job_list.append(job_dict)
-    return job_list
+    country = jobs[provider_name][search_type]['country']
+    url = jobs[provider_name][search_type]['url']
+
+    job = {
+        "url": url,
+        "house_type": house_type,
+        "table_name": table_name,
+        "country": country,
+        "offer_type": offer_type
+    }
+    return job
         
         

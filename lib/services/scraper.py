@@ -57,9 +57,10 @@ class Scraper():
             response = session.get(url, headers=self.headers, cookies=self.driver.cookies)
             page_content = response.text
         
-        # log_path = os.path.join(self.base_path, 'logs/test.html')
-        # with open(log_path, 'w') as file:
-        #     file.write(page_content)
+        print(url)
+        log_path = os.path.join(self.base_path, 'logs/test.html')
+        with open(log_path, 'w') as file:
+            file.write(page_content)
 
         soup = BeautifulSoup(page_content,'html5lib')
         attr_dict = self.getAttr(self.providerConfig['crawlContainer'])
@@ -71,8 +72,9 @@ class Scraper():
             if containers2 is not None:
                 containers = containers + containers2
 
-        
+        print(len(containers))
         if containers is None:
+            print('containers is None')
             self.blocked = True
             self.bad_response = page_content             
         

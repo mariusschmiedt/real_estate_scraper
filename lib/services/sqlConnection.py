@@ -11,7 +11,6 @@ class sqlConnection():
         self.cur = None
         
         self.table_name = table_name
-        self.currencies = ['€', 'EURO', 'CHF', '$', 'Dollar', 'USD']
         self.table_columns = table_columns
         
     def openMySQL(self):

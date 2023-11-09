@@ -1,5 +1,5 @@
 
-from ..utils import replaceRoomAbbr, findPostalCodeInAddress, getNum
+from ...utils import replaceRoomAbbr, findPostalCodeInAddress, getNum
 
 class provider():
     def __init__(self):
@@ -9,7 +9,7 @@ class provider():
             "crawlContainer": 'script@type=application/json',
             "jsonContainer": 'props.pageProps.initialResultData.resultItems',
             "sortByDateParam": '',
-            "paginate": '&page=',
+            "paginate": 'page=',
             "crawlFields": {
                 "provider_id": 'AdId',
                 "price": 'PriceValue',

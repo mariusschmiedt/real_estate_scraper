@@ -26,7 +26,7 @@ def replaceCurrency(value):
     return replaceArray(value, ['€', 'EURO', '\x82', 'â\x82¬', 'â¬', 'CHF', '$', 'Dollar', 'USD', '/mo', '.—', ',-', '&euro;'])
 
 def replaceSizeUnit(value):
-    return replaceArray(value, ['m&#178;', 'm&sup2;', 'm²', 'm2', 'm^2', 'sqft', 'mÂ²', 'm'])
+    return replaceArray(value, ['m 2', 'm&#178;', 'm&sup2;', 'm²', 'm2', 'm^2', 'sqft', 'mÂ²', 'm'])
 
 def replaceRoomAbbr(value):
     return replaceArray(value, ['Zimmer', 'Zi.', 'Zi', 'Rooms', 'Ro'])

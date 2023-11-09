@@ -1,6 +1,6 @@
 
 import re
-from ..utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, numConvert_de
+from ...utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress, numConvert_de
 
 class provider():
     def __init__(self):
@@ -9,7 +9,7 @@ class provider():
             "search_url": None,
             "crawlContainer": 'li.result-list__listing',
             "sortByDateParam": 'sorting=2',
-            "paginate": '?pagenumber=',
+            "paginate": 'pagenumber=',
             "crawlFields": {
                 "provider_id": 'article.result-list-entry@data-obid',
                 "price": 'dd.font-highlight font-tabular:1c',
@@ -26,7 +26,7 @@ class provider():
         self.metaInformation = {
             "name": 'Immoscout',
             "baseUrl": 'https://www.immobilienscout24.de',
-            "id": 'immoscout',
+            "id": 'immoscout_de',
         }
 
     def normalize(self, o):

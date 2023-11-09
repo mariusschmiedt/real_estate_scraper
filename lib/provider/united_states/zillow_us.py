@@ -1,6 +1,6 @@
 
 import re
-from ..utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
+from ...utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
 
 class provider():
     def __init__(self):
@@ -27,7 +27,7 @@ class provider():
         self.metaInformation = {
             "name": 'Zillow',
             "baseUrl": 'https://www.zillow.com',
-            "id": 'zillow',
+            "id": 'zillow_us',
         }
 
     def normalize(self, o):

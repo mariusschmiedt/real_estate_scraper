@@ -1,9 +1,128 @@
 {
-  "comparis_ch": {
+  "immoscout_de": {
+    "apartement_rent": {
+      "url": "https://www.immobilienscout24.de/Suche/de/wohnung-mieten",
+      "country": "Germany"
+    }
+  },
+  "kleinanzeigen": {
     "apartement_buy": {
-      "url": "https://www.comparis.ch/immobilien/result/list?requestobject=%7B%22DealType%22%3A20%2C%22SiteId%22%3A0%2C%22RootPropertyTypes%22%3A%5B%5D%2C%22PropertyTypes%22%3A%5B%5D%2C%22RoomsFrom%22%3Anull%2C%22RoomsTo%22%3Anull%2C%22FloorSearchType%22%3A0%2C%22LivingSpaceFrom%22%3Anull%2C%22LivingSpaceTo%22%3Anull%2C%22PriceFrom%22%3Anull%2C%22PriceTo%22%3Anull%2C%22ComparisPointsMin%22%3A0%2C%22AdAgeMax%22%3A0%2C%22AdAgeInHoursMax%22%3Anull%2C%22Keyword%22%3A%22%22%2C%22WithImagesOnly%22%3Anull%2C%22WithPointsOnly%22%3Anull%2C%22Radius%22%3Anull%2C%22MinAvailableDate%22%3A%221753-01-01T00%3A00%3A00%22%2C%22MinChangeDate%22%3A%221753-01-01T00%3A00%3A00%22%2C%22LocationSearchString%22%3Anull%2C%22Sort%22%3A3%2C%22HasBalcony%22%3Afalse%2C%22HasTerrace%22%3Afalse%2C%22HasFireplace%22%3Afalse%2C%22HasDishwasher%22%3Afalse%2C%22HasWashingMachine%22%3Afalse%2C%22HasLift%22%3Afalse%2C%22HasParking%22%3Afalse%2C%22PetsAllowed%22%3Afalse%2C%22MinergieCertified%22%3Afalse%2C%22WheelchairAccessible%22%3Afalse%2C%22LowerLeftLatitude%22%3Anull%2C%22LowerLeftLongitude%22%3Anull%2C%22UpperRightLatitude%22%3Anull%2C%22UpperRightLongitude%22%3Anull%7D",
-      "country": "Switzerland",
-      "number_format": "Switzerland"
+      "url": "https://www.kleinanzeigen.de/s-stuttgart/eigentumswohnung/k0l9280",
+      "country": "Germany"
+    }
+  },
+  "immoswp_de": {
+    "apartement_rent": {
+      "url": "https://immo.swp.de/suchergebnisse?l=Deutschland&r=0km&a=&t=apartment%3Arental%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "country": "Germany"
+    },
+    "house_rent": {
+      "url": "https://immo.swp.de/suchergebnisse?l=Deutschland&r=0km&a=&t=house%3Arental%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "country": "Germany"
+    },
+    "apartement_buy": {
+      "url": "https://immo.swp.de/suchergebnisse?l=Deutschland&r=0km&a=&t=apartment%3Asale%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "country": "Germany"
+    },
+    "house_buy": {
+      "url": "https://immo.swp.de/suchergebnisse?l=Deutschland&r=0km&a=&t=house%3Asale%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "country": "Germany"
+    }
+  },
+  "immowelt": {
+    "apartement_rent": {
+      "url": "https://www.immowelt.de/suche/stuttgart/wohnungen/mieten?d=true",
+      "country": "Germany"
+    }
+  },
+  "immodirekt_at": {
+    "apartement_buy": {
+      "url": "https://www.immodirekt.at/eigentumswohnungen/oesterreich",
+      "country": "Austria"
+    },
+    "apartement_rent": {
+      "url": "https://www.immodirekt.at/mietwohnungen/oesterreich",
+      "country": "Austria"
+    },
+    "house_buy": {
+      "url": "https://www.immodirekt.at/haeuser-kaufen/oesterreich",
+      "country": "Austria"
+    },
+    "house_rent": {
+      "url": "https://www.immodirekt.at/haeuser-mieten/oesterreich",
+      "country": "Austria"
+    }
+  },
+  "wohnnet_at": {
+    "apartement_buy": {
+      "url": "https://www.wohnnet.at/immobilien/eigentumswohnungen",
+      "country": "Austria"
+    },
+    "apartement_rent": {
+      "url": "https://www.wohnnet.at/immobilien/mietwohnungen",
+      "country": "Austria"
+    },
+    "house_buy": {
+      "url": "https://www.wohnnet.at/immobilien/haeuser?intention=kauf",
+      "country": "Austria"
+    },
+    "house_rent": {
+      "url": "https://www.wohnnet.at/immobilien/miethaeuser",
+      "country": "Austria"
+    }
+  },
+  "immo_kurier_at": {
+    "apartement_buy": {
+      "url": "https://immo.kurier.at/suche?l=Österreich&r=0km&_multiselect_r=0km&a=&t=apartment%3Asale%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "country": "Austria"
+    },
+    "apartement_rent": {
+      "url": "https://immo.kurier.at/suche?l=Österreich&r=0km&a=&t=apartment%3Arental%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "country": "Austria"
+    },
+    "house_buy": {
+      "url": "https://immo.kurier.at/suche?l=Österreich&r=0km&a=&t=house%3Asale%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "country": "Austria"
+    },
+    "house_rent": {
+      "url": "https://immo.kurier.at/suche?l=Österreich&r=0km&a=&t=house%3Arental%3Aliving&pf=&pt=&rf=0&rt=0&sf=&st=",
+      "country": "Austria"
+    }
+  },
+  "willhaben_at": {
+    "apartement_buy": {
+      "url": "https://www.willhaben.at/iad/immobilien/eigentumswohnung/eigentumswohnung-angebote?page=1&sfId=ecd32ff6-978d-46e4-9cf2-e02b13ac6b91&isNavigation=true",
+      "country": "Austria"
+    },
+    "apartement_rent": {
+      "url": "https://www.willhaben.at/iad/immobilien/mietwohnungen/mietwohnung-angebote?sfId=bd01914a-43cb-49cc-bc8e-eb71001a5419&isNavigation=true",
+      "country": "Austria"
+    },
+    "house_buy": {
+      "url": "https://www.willhaben.at/iad/immobilien/haus-kaufen/haus-angebote?page=1&sfId=de41cc10-4803-435c-b6fb-0ed7c37600f4&isNavigation=true",
+      "country": "Austria"
+    },
+    "house_rent": {
+      "url": "https://www.willhaben.at/iad/immobilien/haus-mieten/haus-angebote?page=1&sfId=4c990c8f-7be6-47f0-ad54-6dae52929f81&isNavigation=true",
+      "country": "Austria"
+    }
+  },
+  "flatbee_at": {
+    "apartement_buy": {
+      "url": "https://www.flatbee.at/immobilien/eigentumswohnung/eigentum",
+      "country": "Austria"
+    },
+    "apartement_rent": {
+      "url": "https://www.flatbee.at/immobilien/mietwohnung/miete",
+      "country": "Austria"
+    },
+    "house_buy": {
+      "url": "https://www.flatbee.at/immobilien/haus/eigentum?price_range=10000-2000000",
+      "country": "Austria"
+    },
+    "house_rent": {
+      "url": "https://www.flatbee.at/immobilien/haus/miete",
+      "country": "Austria"
     }
   }
 }

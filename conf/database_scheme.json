@@ -24,5 +24,10 @@
         "state": "TEXT",
         "city": "TEXT",
         "district": "TEXT"
+    },
+    "resume_scheme": {
+        "id": "INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT",
+        "job": "TEXT",
+        "resume_id": "INT(11)"
     }
 }

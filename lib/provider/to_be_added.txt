@@ -18,14 +18,9 @@ test:
 zillow --> Ant
 homegate --> Ant
 immoscout_ch --> Ant
-Immobilienscout24.at --> Response ist kürzer als HTML aber parsen funktioniert
-immobilien.derStandard.at
-Flatbee.at
-Willhaben.at
-Wohnnet.at
-immo.kurier.at
-immodirekt.at
-
+Immobilienscout24.at --> Ant? --> Response ist kürzer als HTML aber parsen funktioniert
+Willhaben.at --> ANT nur 5 Ergebnisse analog Immoscout_at
+Flatbee.at --> Ant keine Ergebnisse gefunden
 
 
 nicht sicher

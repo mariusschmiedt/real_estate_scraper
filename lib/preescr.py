@@ -75,7 +75,6 @@ class PReEsCr():
         if paginationResponse is None:
             maxPageNum = self.scraper.maxPageNum
             listings_per_page = self.scraper.listings_per_page
-
             urls = list()
             for page in range(1, int(maxPageNum)+1):
                 u = mutateUrl.paginationModifier(url, str(page), str(listings_per_page))

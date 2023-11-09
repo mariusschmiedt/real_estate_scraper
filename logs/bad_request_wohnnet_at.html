@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="de-at">
+<head>
+	<!-- Head -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description">
+<meta name="robots" content="noindex,follow">
+<title></title>
+<link rel="canonical">
+
+<!-- Icons -->
+<link rel="icon" sizes="32x32" href="/media/images/wohnnet/icon_32_32.png">
+<link rel="icon" sizes="192x192" href="/media/images/wohnnet/icon_192_192.png">
+<link rel="apple-touch-icon" sizes="32x32" href="/media/images/wohnnet/icon_32_32_white.png">
+<link rel="apple-touch-icon" sizes="192x192" href="/media/images/wohnnet/icon_192_192_white.png">
+
+<script id="Cookiebot" src="https://consent.cookiebot.com/uc.js"
+        data-cbid="7f885d89-2852-4f4a-9be6-ad5670b70c79"
+        data-blockingmode="auto"
+        data-framework="IAB">
+</script>
+
+<!-- Pagination -->
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Encode+Sans:300,400,500&display=swap">
+<link rel="preconnect" href="https://www.google.com">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+
+<!-- Preconnect to used services -->
+<link rel="preconnect" href="https://api.wohnnet.at" crossorigin>
+<link rel="preconnect" href="https://analytics.wohnnet.at" crossorigin>
+
+    <link rel="preconnect" href="https://ad1.adfarm1.adition.com" crossorigin>
+    <link rel="preconnect" href="https://static.adfarm1.adition.com" crossorigin>
+
+<!-- Bundled styles -->
+
+    <link rel="preload" as="style" href="/media/styles/_bundles/bundle.min.css">
+    <link rel="stylesheet" href="/media/styles/_bundles/bundle.min.css">
+
+
+
+    <!-- Matomo Tag Manager -->
+    
+        <script data-cookieconsent="ignore">
+            var _mtm = window._mtm = window._mtm || [];
+            _mtm.push({ 'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start' });
+            var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+            g.async = true; g.src = 'https://analytics.wohnnet.at/js/container_re7d0jMZ.js'; s.parentNode.insertBefore(g, s);
+        </script>
+    
+    
+    <script>
+        var waitForTrackerCount = 0;
+        function matomoWaitForTracker() {
+            if (typeof _paq === 'undefined' || typeof Cookiebot === 'undefined') {
+                if (waitForTrackerCount < 40) {
+                    setTimeout(matomoWaitForTracker, 250);
+                    waitForTrackerCount++;
+                    return;
+                }
+            } else {
+                window.addEventListener('CookiebotOnAccept', function (e) {
+                    consentSet();
+                });
+                window.addEventListener('CookiebotOnDecline', function (e) {
+                    consentSet();
+                })
+            }
+        }
+        function consentSet() {
+            if (Cookiebot.consent.statistics) {
+                _paq.push(['setCookieConsentGiven']);
+                _paq.push(['setConsentGiven']);
+            } else {
+                _paq.push(['forgetCookieConsentGiven']);
+                _paq.push(['forgetConsentGiven']);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', matomoWaitForTracker());
+    </script>
+    <!-- Matomo A/B Test -->
+    <script>
+        var _paq = _paq || [];
+        var abtesting = false;
+        _paq.push(['AbTesting::create', {
+            name: '3', // you can also use '3' (ID of the experiment) to hide the name
+            percentage: 100,
+            includedTargets: [{ "attribute": "url", "inverted": "0", "type": "regexp", "value": "immobilien\\\/[a-zA-Z0-9-]+-\\d+|\\\/i(\\d+).htm$" }],
+            excludedTargets: [],
+            variations: [
+                {
+                    name: 'original',
+                    activate: function (event) {
+                        // usually nothing needs to be done here
+                        document.getElementById('conversion-variation').value = 'original';
+                    }
+                },
+                {
+                    name: '5', // you can also use '5' (ID of the variation) to hide the name
+                    activate: function (event) {
+                        // eg $('#btn').attr('style', 'color: ' + this.name + ';');
+                        document.getElementById('conversion-variation').value = 'anfrage-senden-blau';
+                        document.getElementById('conversion-info').classList.remove('red');
+                        document.getElementById('conversion-info').classList.add('blue');
+                    }
+                }
+            ],
+            trigger: function () {
+                return true; // here you can further customize which of your visitors will participate in this experiment
+            }
+        }]);
+    </script>
+    <!-- Matomo A/B Test -->
+    <!-- End Matomo Tag Manager -->
+
+	
+</head>
+<body id="layout-columns" style="background-color: #efefef">
+	<script>
+	document.addEventListener("DOMContentLoaded", function ()
+	{
+		document.getElementById("navigation-toggle").onclick = function ()
+		{
+			document.getElementById("navigation").classList.toggle("active");
+		};
+	});
+</script>
+
+<!-- Navigation -->
+<nav id="navigation-container" class="bg-white shadow">
+	<div class="container-ad px-ad-3">
+		<div id="navigation" class="row align-items-center justify-content-between">
+			<!-- Left -->
+			<div id="navigation-left" class="col-auto">
+				<!-- Toggle button -->
+				<button id="navigation-toggle" class="btn btn-icon grey text-white" type="button" title="Navigation" aria-label="Navigation"></button>
+			</div>
+
+			<!-- Center logo (Mobile and active) -->
+			<div id="navigation-logo-small" class="col-auto">
+				<a href="/" title="Zur Startseite" aria-label="Zur Startseite">
+					<img src="/media/images/wohnnet/logo_reduced_72_30.svg" alt="Logo" height="30" width="72" />
+				</a>
+			</div>
+
+			<!-- Center logo (Tablet+) -->
+			<div id="navigation-logo" class="col-auto">
+				<a href="/" title="Zur Startseite" aria-label="Zur Startseite">
+					<img src="/media/images/wohnnet/logo_190_50.svg" alt="Logo" height="50" width="190" />
+				</a>
+			</div>
+
+			<!-- Right -->
+			<div id="navigation-right" class="col-auto text-right order-lg-4">
+				<!-- Favorites button -->
+				<button class="btn btn-icon grey text-white favorites-open" type="button" title="Merkliste" aria-label="Merkliste">
+					<i class="fas fa-heart"></i>
+					<span class="count"></span>
+				</button>
+
+				<!-- User button -->
+				<a id="navigation-user" class="btn btn-icon grey text-white ml-2" href="/login/meinwohnnet" target="_blank" title="Mein Wohnnet" aria-label="Mein Wohnnet">
+					<i class="fas fa-user"></i>
+				</a>
+			</div>
+
+			<!-- Center content -->
+			<div id="navigation-content" class="col-12 col-lg order-lg-3">
+				<div>
+					<a href="/immobilien/suche" class="active">Immobilien</a>
+				</div>
+				<div>
+					<a href="/ratgeber/">Ratgeber</a>
+				</div>
+				<div>
+					<a href="/immobilien/fertighaeuser/">Fertighäuser</a>
+				</div>
+				<div>
+					<a href="/firmen/">Find' den Profi</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</nav>
+	
+	<div class="mt-1">
+		<!-- Breadcrumbs -->
+<section id="breadcrumbs" class="bg-white shadow mt-1">
+	<div class="container-ad px-ad-3">
+			<a id="breadcrumbs-back" class=" d-md-inline-block" href="/">
+				<i class="fas fa-undo-alt"></i>zur Startseite
+			</a>
+	</div>
+</section>
+	</div>
+
+
+<div class="position-relative">
+        <!-- Ad -->
+        <aside id="ad-skyscraper-left" class="ad">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    window.addEventListener('CookiebotOnConsentReady', function (e) {
+                        if (Cookiebot.consent.marketing) {
+                            adHelpers.render("ad-skyscraper-left", 1713);
+                        }
+                    }, false);
+                });
+            </script>
+        </aside>
+
+    <div class="container-ad">
+        <div class="row align-items-start">
+            <!-- Left column -->
+            <aside id="left-column">
+                
+            </aside>
+
+            <!-- Main column -->
+            <main id="main-column" class="w-100">
+                
+
+<!-- Index -->
+<section class="bg-white shadow p-4 px-md-5 my-1 my-md-6">
+	<h1>Diese Seite konnten wir leider nicht finden.</h1>
+	<p class="light bigger mt-2">Vielleicht gibt es diese Immobilie nicht mehr?</p>
+	<div class="text-center">
+		<a class="btn grey mt-3" href="/">Zur Startseite</a>
+		<a class="btn red ml-1 mt-3" href="/immobilien/suche">Zur Immobiliensuche</a>
+	</div>
+</section>
+            </main>
+
+            <!-- Right column -->
+            <aside id="right-column">
+                
+            </aside>
+        </div>
+    </div>
+
+        <!-- Ad -->
+        <aside id="ad-skyscraper" class="ad">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    window.addEventListener('CookiebotOnConsentReady', function (e) {
+                        if (Cookiebot.consent.marketing) {
+                            adHelpers.render("ad-skyscraper", 1189);
+                        }
+                    }, false);
+                });
+            </script>
+        </aside>
+</div>
+
+	
+	<!-- Footer -->
+<footer class="pb-3" style="background-color: #e8e7e9">
+	<div class="container-ad px-ad-3">
+		<div class="row">
+			<div class="col-sm-6 col-md mt-4">
+				<p class="h5 mb-1">Ratgeber</p>
+				<a href="/bauen/">Bauen</a>
+				<a href="/wohnen/">Wohnen</a>
+				<a href="/sanierung/">Sanieren</a>
+				<a href="/energie/">Energie</a>
+				<a href="/garten/">Garten</a>
+				<a href="/finanzieren/">Finanzieren</a>
+				<a href="/business/">Business</a>
+				<a href="/service/events/">Messen & Events</a>
+				<a href="/service/magazin/">Magazine & Kataloge</a>
+			</div>
+			<div class="col-sm-6 col-md mt-4">
+                <p class="h5 mb-1">Service</p>
+                    <a href="/">Immobilien</a>
+                    <a href="/business/marketing/immobilien-inserieren-64095">Immobilien inserieren</a>
+                    <a href="/immobilien/fertighaeuser/">Fertighäuser</a>
+                    <a href="/firmen/">Firmen</a>
+                    <br>
+                    <a href="https://issuu.com/wohnnet/docs/wohnnet_mediadaten_2022_23_neu_5c7d335466d87a?fr=sOTQ2NTU3MzAwMzY" target="_blank">Mediadaten</a>
+                    <a href="/service/anzeigen/werbung-auf-wohnnet-25486">Werben auf Wohnnet</a>
+</div>
+			<div class="col-sm-6 col-md mt-4">
+				<p class="h5 mb-1">Netzwerk</p>
+				<a href="https://www.facebook.com/wohnnet" target="_blank" rel="noreferrer">Wohnnet auf Facebook</a>
+				<a href="https://heise-regioconcept.at/" rel="noreferrer">heise-regioconcept.at</a>
+				<a href="https://heise-regioconcept.de/" rel="noreferrer">heise-regioconcept.de</a>
+				<br>
+				<br>
+				<a href="/service/allgemeine-geschaeftsbedingungen-14225">AGB</a>
+				<a href="/service/impressum-19676">Impressum</a>
+				<a href="/service/offenlegung-21535">Datenschutzerklärung</a>
+			</div>
+		</div>
+		<div class="mt-3 pt-3 bt-1 text-right">
+			© 2020 Heise RegioConcept GmbH & Co. KG
+		</div>
+	</div>
+</footer>
+	
+
+
+	<!-- Load required resources (js, fonts, css) -->
+	<!-- Resources pre -->
+<!-- Icons -->
+<link rel="icon" href="/favicon.ico">
+
+<!-- Fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Encode+Sans:300,400,500&display=swap">
+
+<!-- Bundled scripts -->
+
+	<script src="/media/scripts/_bundles/bundle.min.js"></script>
+
+
+
+<!-- Custom scripts -->
+<script>
+	// Initialize lazy loading
+	lazyloadHelpers.initialize(200, false);
+
+	let favoritesSettings = {
+		debug: false,
+		endpoint: "/immobilien/favorites"
+	};
+
+	// Initialize favorites
+	favorites.initialize(favoritesSettings);
+	favorites.update();
+
+	// Initialize tooltips
+	$("[data-toggle='tooltip']").tooltip();
+</script>
+
+	<!-- Google Tag Manager -->
+	<script data-cookieconsent="ignore">
+		(function (w, d, s, l, i)
+		{
+			w[l] = w[l] || []; w[l].push({
+				'gtm.start':
+					new Date().getTime(), event: 'gtm.js'
+			}); var f = d.getElementsByTagName(s)[0],
+				j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+					'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+		})(window, document, 'script', 'dataLayer', 'GTM-TXQJV5');
+	</script>
+	<!-- Google Tag Manager (noscript) -->
+	<noscript>
+		<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TXQJV5" height="0" width="0" style="display:none; visibility:hidden"></iframe>
+	</noscript>
+
+	<!-- Adition (ads) -->
+	<script src="//imagesrv.adition.com/js/srp.js"></script>
+	<script src="//imagesrv.adition.com/js/aut.js"></script>
+
+
+	<!-- Load optional injected resources (js, css) -->
+	
+	
+
+	<!-- Execute scripts after optional scripts -->
+		<script>	
+		document.addEventListener("DOMContentLoaded", function () {
+			window.addEventListener('CookiebotOnConsentReady', function (e) {
+				 if (Cookiebot.consent.marketing)
+				 {
+					adHelpers.setConsent();
+                    adHelpers.complete(true);
+				 }
+			 }, false);	        
+		});
+
+    </script>
+
+
+
+<script>	
+    $(".realty-result-topobject").each(function () {
+	
+		var btn = $(this);
+		$(this).click(function () {			
+			
+			var id = btn.data("id");
+			var title = btn.data("title");			
+			var data = '{"id": '+id+', "title":"'+title+'", "type" : "ClickTopObject"}';
+			
+			var xhr = new XMLHttpRequest();
+            xhr.open("POST", '/async/statistic/click', true);
+            xhr.setRequestHeader("Content-Type", "application/json");            
+            xhr.send(data);
+		});
+	});
+	
+    $(".realty-result-topplaced").each(function () {
+    	
+    		var btn = $(this);
+    		$(this).click(function () {			
+    			
+    			var id = btn.data("id");
+    			var title = btn.data("title");			
+    			var data = '{"id": '+id+', "title":"'+title+'", "type" : "ClickTopPlaced"}';
+    			
+    			var xhr = new XMLHttpRequest();
+                xhr.open("POST", '/async/statistic/click', true);
+                xhr.setRequestHeader("Content-Type", "application/json");            
+                xhr.send(data);
+    		});
+    	});
+	
+	document.addEventListener("DOMContentLoaded", function () {
+                            
+		window.reloadAllAdsTimer = setInterval(reloadAllAds, 15000);
+        
+        function reloadAllAds() {
+            if (document.hasFocus()) {
+                if (dataLayer) {
+					dataLayer.push({'event': 'ad-reload-timer'});
+				}
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

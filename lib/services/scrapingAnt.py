@@ -1,8 +1,8 @@
-from ..provider.immoscout import provider as immoScoutInfo
-from ..provider.immonet_not_done import provider as immoNetInfo
-from ..provider.zillow import provider as zillowInfo
-from ..provider.homegate_ch import provider as homegateInfo
-from ..provider.immoscout_ch import provider as immoscoutChInfo
+from ..provider.germany.immoscout_de import provider as immoScoutInfo
+from ..provider.germany.immonet_not_done import provider as immoNetInfo
+from ..provider.united_states.zillow_us import provider as zillowInfo
+from ..provider.switzerland.homegate_ch import provider as homegateInfo
+from ..provider.switzerland.immoscout_ch import provider as immoscoutChInfo
 from ..utils import getProviderConfig
 
 def needScrapingAnt(id):

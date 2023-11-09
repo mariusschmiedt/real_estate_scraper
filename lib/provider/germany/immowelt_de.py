@@ -1,4 +1,4 @@
-from ..utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
+from ...utils import replaceCurrency, replaceSizeUnit, replaceRoomAbbr, getCurrency, getSizeUnit, findPostalCodeInAddress
 
 class provider():
     def __init__(self):
@@ -7,7 +7,7 @@ class provider():
             "search_url": None,
             "crawlContainer": 'div.EstateItem*',
             "sortByDateParam": 'sd=DESC&sf=TIMESTAMP',
-            "paginate": '&sp=',
+            "paginate": 'sp=',
             "crawlFields": {
                 "provider_id": 'a.mainSection*@id',
                 "price": 'div.@data-test=price',
@@ -23,7 +23,7 @@ class provider():
         self.metaInformation = {
             "name": 'Immowelt',
             "baseUrl": 'https://www.immowelt.de/',
-            "id": 'immowelt',
+            "id": 'immowelt_de',
         }
 
     def normalize(self, o):
