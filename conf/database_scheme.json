@@ -23,7 +23,9 @@
         "postalcode": "TEXT",
         "state": "TEXT",
         "city": "TEXT",
-        "district": "TEXT"
+        "district": "TEXT",
+        "lat": "DOUBLE",
+        "lon": "DOUBLE"
     },
     "resume_scheme": {
         "id": "INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT",

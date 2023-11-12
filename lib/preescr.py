@@ -36,7 +36,7 @@ class PReEsCr():
         self.address_sql = sqlConnection('address_table', self._base_path, self._database_scheme['address_scheme'])
         self.address_sql.preProcessDbTables()
         # determine if a scraping ant is required
-        self.ant_required = needScrapingAnt(self._providerConfig['provider'])
+        self.ant_required = needScrapingAnt(base_path, self._providerConfig['provider'])
         # initialize scraper
         self.scraper = Scraper(self._providerConfig, self.ant_required, self._base_path, country, house_type)
     
@@ -48,11 +48,9 @@ class PReEsCr():
             listings = self._normalize(listingResponse)
             # validate listings
             fault_listing = self._validation(listings)
-            
             if fault_listing is None:
                 # normalize address
                 listings = self._normalize_address(listings)
-                
                 # save listings to database
                 self._saveListing(listings)
                 return None

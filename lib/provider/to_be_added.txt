@@ -1,5 +1,4 @@
 Frankreich 
-leboncoin
 seloger.com
 liveonriviera
 pap.fr
@@ -11,13 +10,19 @@ Figaro Immo
 MaisonsEtAppartements.fr
 
 
+UAE
+PropertyFinder
+Zoom Property
+Dubizzle
+Square Yards
+Emaar
+Damac Properties
+ae.opensooq.com
+
 
 ZenRows vs Scraping Ant
 
 test:
-zillow --> Ant
-homegate --> Ant
-immoscout_ch --> Ant
 Immobilienscout24.at --> Ant? --> Response ist kürzer als HTML aber parsen funktioniert
 Willhaben.at --> ANT nur 5 Ergebnisse analog Immoscout_at
 Flatbee.at --> Ant keine Ergebnisse gefunden

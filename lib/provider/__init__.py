@@ -1,4 +1,4 @@
-from .germany.immonet_not_done import provider as immonet
+from .germany.immonet_de import provider as immonet_de
 from .germany.immoscout_de import provider as immoscout_de
 from .germany.immoswp_de import provider as immoswp_de
 from .germany.immowelt_de import provider as immowelt_de
@@ -16,6 +16,8 @@ from .austria.immo_kurier_at import provider as immo_kurier_at
 from .austria.willhaben_at import provider as willhaben_at
 from .austria.wohnnet_at import provider as wohnnet_at
 from .austria.immodirekt_at import provider as immodirekt_at
+from .france.leboncoin_fr import provider as leboncoin_fr
+from .united_arab_emirates.bayut_uae import provider as bayut_uae
 
 def getProvider(provider):
     if provider == 'immoswp_de':
@@ -24,8 +26,8 @@ def getProvider(provider):
         return immoscout_de()
     if provider == 'immoscout_ch':
         return immoscout_ch()
-    if provider == 'immonet':
-        return immonet()
+    if provider == 'immonet_de':
+        return immonet_de()
     if provider == 'immowelt_de':
         return immowelt_de()
     if provider == 'kleinanzeigen_de':
@@ -54,3 +56,7 @@ def getProvider(provider):
         return wohnnet_at()
     if provider == 'immodirekt_at':
         return immodirekt_at()
+    if provider == 'leboncoin_fr':
+        return leboncoin_fr()
+    if provider == 'bayut_uae':
+        return bayut_uae()

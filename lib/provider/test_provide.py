@@ -130,7 +130,11 @@ def getContent(container, attr_dict, get_container = False):
     else:
         if attr_dict['attr_val_des'] is not None and attr_dict['tag'] is not None:
             if 'json' in attr_dict['attr_val_des'] and attr_dict['tag'] == 'script':
-                result = json.loads(result[attr_dict['child']].text)
+                if attr_dict['attr_val_des_start']:
+                    result = [r for r in result if r.attrs[attr_dict['attr_name']].startswith(attr_dict['attr_val_des'])]
+                else:
+                    result = [r for r in result if r.attrs[attr_dict['attr_name']] == attr_dict['attr_val_des']]
+                result = json.loads(result[attr_dict['child']].string)
         else:
             if 'top_field' in config:
                 attr_dict_top = getAttr(config['top_field'])
@@ -153,7 +157,11 @@ def getListings(containers, config):
             found_listings_num = getContent(soup, attr_dict)
             found_listings_num = re.sub('[^0-9]','', found_listings_num)
             found_listings = int(found_listings_num)
-    listings_per_page = len(containers)
+    listings_per_page = 1
+    if type(containers) == dict:
+        listings_per_page = len(getJsonResult(containers, config['jsonContainer']))
+    else:
+        listings_per_page = len(containers)
     if 'listings_per_page' in config:
         if config['listings_per_page'] != '':
             try:
@@ -166,7 +174,11 @@ def getListings(containers, config):
                 found_listings = min(int(config['maxPageResults']), found_listings)
             except:
                 raise Exception('Parameter "maxPageResults" of config ' + config['provider'] + ' must be a number')
-    maxPageNum  = str(math.ceil(int(found_listings) / int(listings_per_page)))
+    if 'maxPageNum' in config:
+        if type(containers) == dict:
+            maxPageNum = int(getJsonResult(containers, config['maxPageNum']))
+    else:
+        maxPageNum  = str(math.ceil(int(found_listings) / int(listings_per_page)))
     return found_listings, listings_per_page, maxPageNum
 
 def getJsonResult(container, value):
@@ -201,63 +213,111 @@ def getNum(value):
             new_value = v
     return new_value
 
-
 def normalize(o):
-    o['postalcode'] = ''
-    for add in o['address_detected'].split(' '):
-        num = False
-        try:
-            int(add)
-            num = True
-        except:
-            pass
-        if num and len(add) >=4:
-            o['postalcode'] = add
-    if ',' in o['address_detected']:
-        o['city'] = o['address_detected'].split(',')[-1].strip()
+    o['provider_id'] = o['provider_id'].split('/')[-1].replace('.html', '').replace('details-', '')
+    if type(o['price']) == list:
+        o['price'] = o['price'][0]
+        if type(o['price']) == dict:
+            o['price'] = o['price']['priceSpecification']
+            price = ''
+            if 'price' in o['price']:
+                price = o['price']['price']
+            if 'unitText' in o['price']:
+                num = False
+                try:
+                    float(price)
+                    num = True
+                except:
+                    pass
+                if num:
+                    price = float(price)
+                    if o['price']['unitText'] == 'yearly':
+                        price = price / 12
+                    if o['price']['unitText'] == 'weekly':
+                        price = price* 52 / 12
+                    if o['price']['unitText'] == 'daily':
+                        price = price * 365 / 12
+                    price = str(price)
+            o['currency'] = o['price']['priceCurrency']
+            o['price'] = price
+        else:
+            o['price'] = ''
     else:
-        o['city'] = o['address_detected']
-    if o['postalcode'] != '':
-        o['city'] = o['city'].replace(o['postalcode'], '').strip() 
-    o['url'] = 'https://www.immobilienscout24.at/'[0:-1] + o["url"]
-    o['provider_id'] = o['provider_id'].replace('expose', '').replace('/', '')
-    if '&euro;' in o['price'] or '€' in o['price']:
-        o['currency'] = 'EUR'
-    o['price'] = o['price'].replace('&euro;', '').replace('€', '').replace(',-', '').strip()
-    if 'm²' in o['size'] or 'm2' in o['size']:
-        o['size_unit'] ='m^2'
-    o['size'] = o['size'].replace('m²', '').replace('m2', '').strip()
-    o['rooms'] = o['rooms'].replace('Zimmer', '').replace('Zi', '').strip()
-    o['price'] = numConvert(o['price'])
-    o['size'] = numConvert(o['size'])
-    o['rooms'] = numConvert(o['rooms'])
+        o['price'] = ''
+    if 'sqft' in o['size_unit'] or 'SQFT' in o['size_unit']:
+        o['size_unit'] = 'sqft'
+    o['size'] = o['size'].replace(',', '')
+    if o['size_unit'] == 'sqft':
+        o['size'] = str(round(float(o['size']) / 10.764, 2))
+        o['size_unit'] = 'm^2'
+    o['rooms'] = o['rooms'].replace(',', '')
+    address = o['address_detected']
+    lat = str(address['latitude'])
+    lon = str(address['longitude'])
+    o['address_detected'] = 'lat: ' + lat + ', ' + 'lon: ' + lon
     try:
         o['price_per_space'] = str(round((float(o['price']) / float(o['size'])), 2))
     except:
         pass
     return o
 
+# def normalize(o):
+#     o['postalcode'] = ''
+#     for add in o['address_detected'].split(' '):
+#         num = False
+#         try:
+#             int(add)
+#             num = True
+#         except:
+#             pass
+#         if num and len(add) >=4:
+#             o['postalcode'] = add
+#     if ',' in o['address_detected']:
+#         o['city'] = o['address_detected'].split(',')[-1].strip()
+#     else:
+#         o['city'] = o['address_detected']
+#     if o['postalcode'] != '':
+#         o['city'] = o['city'].replace(o['postalcode'], '').strip() 
+#     o['url'] = 'https://www.immobilienscout24.at/'[0:-1] + o["url"]
+#     o['provider_id'] = o['provider_id'].replace('expose', '').replace('/', '')
+#     if '&euro;' in o['price'] or '€' in o['price']:
+#         o['currency'] = 'EUR'
+#     o['price'] = o['price'].replace('&euro;', '').replace('€', '').replace(',-', '').strip()
+#     if 'm²' in o['size'] or 'm2' in o['size']:
+#         o['size_unit'] ='m^2'
+#     o['size'] = o['size'].replace('m²', '').replace('m2', '').strip()
+#     o['rooms'] = o['rooms'].replace('Zimmer', '').replace('Zi', '').strip()
+#     o['price'] = numConvert(o['price'])
+#     o['size'] = numConvert(o['size'])
+#     o['rooms'] = numConvert(o['rooms'])
+#     try:
+#         o['price_per_space'] = str(round((float(o['price']) / float(o['size'])), 2))
+#     except:
+#         pass
+#     return o
+
 config = {
     "search_url": None,
-    "crawlContainer": 'li.Item-item-J04',
-    "sortByDateParam": 'aktualitaet',
-    "paginate": 'seite-',
+    "crawlContainer": 'script@type=application/ld+json',
+    "jsonContainer": 'itemListElement',
+    "sortByDateParam": 'sort=date_desc',
+    "paginate": 'page-',
     "crawlFields": {
-        "provider_id": 'a.Item-item__link-pTS@href',
-        "price": 'li.Text-color-gray-dark-wi_ Text-size-s-KGp Text-bold-t5X',
-        "size": 'li.w-full mb-0 mt-0 mr-0*:1c',
-        "rooms": 'li.w-full mb-0 mt-0 mr-0*:2c',
-        "title": 'h2.Text-color-gray-dark-wi_ Text-size-standard-X2v Text-clamp-lines-1-SVo',
-        "url": 'a.Item-item__link-pTS@href',
-        "address_detected": 'address.Item-item__address*',
+        "provider_id": 'mainEntity.url',
+        "price": 'mainEntity.offers.priceSpecification',
+        "size": 'mainEntity.floorSize.value',
+        "size_unit": 'mainEntity.floorSize.unitText',
+        "rooms": 'mainEntity.numberOfRooms.value',
+        "title": 'mainEntity.name',
+        "url": 'mainEntity.url',
+        "address_detected": 'mainEntity.geo',
     },
-    "num_listings": 'h2.Headline-sub-headline-N14',
-    # "listings_per_page": '25',
+    "num_listings": 'numberOfItems',
 }
 
 # soup = BeautifulSoup(page_content,'html5lib')
 
-with open("/Users/mariusschmiedt/github/fredy_python/lib/provider/example_pages/immodirekt_at.html") as fp:
+with open("/Users/mariusschmiedt/github/fredy_python/lib/provider/example_pages/bayut_uae.html") as fp:
     soup = BeautifulSoup(fp, 'html.parser')
 
 attr_dict = getAttr(config['crawlContainer'])
@@ -268,27 +328,32 @@ found_listings, listings_per_page, maxPageNum = getListings(containers, config)
 if type(containers) == dict:
     containers = getJsonResult(containers, config['jsonContainer'])    
 
-con = containers[0]
+# con = containers[0]
 
-listing = {}
-for key in config['crawlFields'].keys():
-    listing[key] = ''
+listings = list()
+for con in containers:
+    listing = {}
+    for key in config['crawlFields'].keys():
+        listing[key] = ''
+    for key in config['crawlFields'].keys():
+        result = None
+        if type(con) == dict:
+            if not '.' in config['crawlFields'][key]:
+                if config['crawlFields'][key] in con:
+                    result = con[config['crawlFields'][key]]
+            else:
+                result = getJsonResult(con, config['crawlFields'][key])
+        else:
+            attr_dict = getAttr(config['crawlFields'][key])
+            result = getContent(con, attr_dict)
+        if result is not None:
+            listing[key] = result
+    # for key in listing.keys():
+    #     print(key + ': ' + str(listing[key]))
+    listing_norm = normalize(listing)
+    # for key in listing_norm.keys():
+    #     print(key + ': ' + str(listing_norm[key]))
+    if 'price_per_space' in listing_norm:
+        listings.append(listing_norm)
 
-for key in config['crawlFields'].keys():
-    result = None
-    if type(con) == dict:
-        if config['crawlFields'][key] in con:
-            result = con[config['crawlFields'][key]]
-    else:
-        attr_dict = getAttr(config['crawlFields'][key])
-        result = getContent(con, attr_dict)
-    if result is not None:
-        listing[key] = result
-
-for key in listing.keys():
-    print(key + ': ' + str(listing[key]))
-
-listing_norm = normalize(listing)
-
-for key in listing_norm.keys():
-    print(key + ': ' + str(listing_norm[key]))
+print(len(listings))

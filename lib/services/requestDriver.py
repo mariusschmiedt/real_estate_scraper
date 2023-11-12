@@ -1,5 +1,5 @@
 import requests
-from ..utils import getProviderConfig
+from ..utils import getAntConfig
 from .scrapingAnt import makeUrlResidential
 
 class makeDriver():
@@ -15,7 +15,7 @@ class makeDriver():
         result = None
         while retryCounter <= self.MAX_RETRIES_SCRAPING_ANT:
             proxyType = 'datacenter'
-            config = getProviderConfig()
+            config = getAntConfig()
             if 'scrapingAnt' in config:
                 if 'proxy' in config['scrapingAnt']:
                     proxyType = config['scrapingAnt']['proxy']

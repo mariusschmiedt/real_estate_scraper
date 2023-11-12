@@ -1,4 +1,10 @@
 {
+  "immonet_de": {
+    "apartement_buy": {
+      "url": "https://www.immonet.de/immobiliensuche/beta?locationIds=125220&parentcat=1&marketingtype=1&excludedFeatureFilters=JUDICIAL_SALE&page=1",
+      "country": "Germany"
+    }
+  },
   "immoscout_de": {
     "apartement_rent": {
       "url": "https://www.immobilienscout24.de/Suche/de/wohnung-mieten",
@@ -117,12 +123,88 @@
       "country": "Austria"
     },
     "house_buy": {
-      "url": "https://www.flatbee.at/immobilien/haus/eigentum?price_range=10000-2000000",
+      "url": "https://www.flatbee.at/immobilien/haus/eigentum",
       "country": "Austria"
     },
     "house_rent": {
       "url": "https://www.flatbee.at/immobilien/haus/miete",
       "country": "Austria"
+    }
+  },
+  "homegate_ch": {
+    "apartement_buy": {
+      "url": "https://www.homegate.ch/kaufen/wohnung/land-schweiz/trefferliste",
+      "country": "Switzerland"
+    },
+    "apartement_rent": {
+      "url": "https://www.homegate.ch/mieten/wohnung/land-schweiz/trefferliste",
+      "country": "Switzerland"
+    },
+    "house_buy": {
+      "url": "https://www.homegate.ch/kaufen/haus/land-schweiz/trefferliste",
+      "country": "Switzerland"
+    },
+    "house_rent": {
+      "url": "https://www.homegate.ch/mieten/haus/land-schweiz/trefferliste",
+      "country": "Switzerland"
+    },
+    "apartement_building_rent": {
+      "url": "https://www.homegate.ch/kaufen/mehrfamilienhaus/land-schweiz/trefferliste",
+      "country": "Switzerland"
+    }
+  },
+  "seloger_fr": {
+    "apartement_buy": {
+      "url": "https://www.seloger.com/list.htm?projects=2&types=1&mandatorycommodities=0&enterprise=0&qsVersion=1.0&m=search_refine-redirection-search_results",
+      "country": "France"
+    },
+    "apartement_rent": {
+      "url": "https://www.seloger.com/list.htm?projects=1&types=1&mandatorycommodities=0&enterprise=0&qsVersion=1.0&m=search_refine-redirection-search_results",
+      "country": "France"
+    },
+    "house_buy": {
+      "url": "https://www.seloger.com/list.htm?projects=2&types=2&mandatorycommodities=0&enterprise=0&qsVersion=1.0&m=search_refine-redirection-search_results",
+      "country": "France"
+    },
+    "house_rent": {
+      "url": "https://www.seloger.com/list.htm?projects=1&types=2&mandatorycommodities=0&enterprise=0&qsVersion=1.0&m=search_refine-redirection-search_results",
+      "country": "France"
+    }
+  },
+  "leboncoin_fr": {
+    "apartement_buy": {
+      "url": "https://www.leboncoin.fr/recherche?category=9&real_estate_type=2",
+      "country": "France"
+    },
+    "apartement_rent": {
+      "url": "https://www.leboncoin.fr/recherche?category=10&real_estate_type=2",
+      "country": "France"
+    },
+    "house_buy": {
+      "url": "https://www.leboncoin.fr/recherche?category=9&real_estate_type=1",
+      "country": "France"
+    },
+    "house_rent": {
+      "url": "https://www.leboncoin.fr/recherche?category=10&real_estate_type=1",
+      "country": "France"
+    }
+  },
+  "bayut_uae": {
+    "apartement_buy": {
+      "url": "https://www.bayut.com/to-rent/property/uae/?rent_frequency=any",
+      "country": "France"
+    },
+    "apartement_rent": {
+      "url": "https://www.leboncoin.fr/recherche?category=10&real_estate_type=2",
+      "country": "France"
+    },
+    "house_buy": {
+      "url": "https://www.leboncoin.fr/recherche?category=9&real_estate_type=1",
+      "country": "France"
+    },
+    "house_rent": {
+      "url": "https://www.leboncoin.fr/recherche?category=10&real_estate_type=1",
+      "country": "France"
     }
   }
 }

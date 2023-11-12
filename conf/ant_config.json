@@ -1,0 +1,20 @@
+{
+    "interval": "60",
+    "port": 9998,
+    "scrapingAnt": {
+        "apiKey": "",
+        "proxy": "datacenter"
+    },
+    "workingHours": {
+        "from": "",
+        "to": ""
+    },
+    "antRequired": [
+        "immoscout_de",
+        "immonet_de",
+        "zillow_us",
+        "homegate_ch",
+        "immoscout_ch",
+        "leboncoin_fr"
+    ]
+}

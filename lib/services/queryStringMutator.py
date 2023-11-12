@@ -77,7 +77,7 @@ class queryStringMutator():
         elif self.provider == 'findmyhome_at':
             page = str((int(page) - 1)  * listings_per_page)
         
-        if self.provider == 'immoscout_at' or self.provider == 'derstandard_at':
+        if self.provider == 'immoscout_at' or self.provider == 'derstandard_at' or self.provider == 'bayut_uae':
             if int(page) > 1:
                 url_parts = urlparse.urlparse(url)
                 # get the path from the url
@@ -118,7 +118,7 @@ class queryStringMutator():
             # get the query from the url
             old_query = url_parts.query
             if old_query == '':
-                url = url + '?' + self.sortByDateParam
+                url = url + '?' + self.paginateParam + page
             else:
                 # split the existing query into parts
                 query = dict(urlparse.parse_qsl(old_query))

@@ -1,8 +1,8 @@
 import json
 import os
 
-def getProviderConfig(base_path):
-    with open(os.path.join(base_path, 'conf/config.json')) as f:
+def getAntConfig(base_path):
+    with open(os.path.join(base_path, 'conf/ant_config.json')) as f:
         providerConfig = json.load(f)
     return providerConfig
 
@@ -67,7 +67,7 @@ def getSizeUnit(value):
     unit = 'm^2'
     if 'm²' in value or 'm2' in value or 'm^2' in value or 'mÂ²' in value or 'm' in value or 'm&sup2;' in value or 'm&#178;' in value:
         unit = 'm^2'
-    if 'sqft' in value:
+    if 'sqft' in value or 'SQFT' in value:
         unit = 'sqft'
     return unit
 

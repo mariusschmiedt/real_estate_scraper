@@ -9,7 +9,7 @@ import html5lib
 import locale
 from scrapingant_client import ScrapingAntClient
 import random
-from ..utils import getProviderConfig, getLanguageId, getDatabaseScheme, replaceChrs
+from ..utils import getAntConfig, getLanguageId, getDatabaseScheme, replaceChrs
 from .requestDriver import makeDriver
 
 class Scraper():
@@ -31,7 +31,7 @@ class Scraper():
 
         self.headers={'User-Agent': random.choice(user_agents_list)}
 
-        self.config = getProviderConfig(base_path)
+        self.config = getAntConfig(base_path)
         
         if 'scrapingAnt' in self.config:
             if 'apiKey' in self.config['scrapingAnt']:
@@ -50,29 +50,39 @@ class Scraper():
             if self.driver.cookies != '':
                 cookies = '&cookies=' + '%3B'.join([cookie + '%3D' + self.driver.cookies[cookie] for cookie in self.driver.cookies.keys()])
                 url = url + cookies
-            client = ScrapingAntClient(token=self.config.scrapingAnt.apiKey)
+            client = ScrapingAntClient(token=self.config['scrapingAnt']['apiKey'])
             page_content = client.general_request(url).content
         else:
             session = requests.Session()
             response = session.get(url, headers=self.headers, cookies=self.driver.cookies)
             page_content = response.text
         
-        print(url)
-        log_path = os.path.join(self.base_path, 'logs/test.html')
-        with open(log_path, 'w') as file:
-            file.write(page_content)
-
         soup = BeautifulSoup(page_content,'html5lib')
         attr_dict = self.getAttr(self.providerConfig['crawlContainer'])
-        containers = self.getContent(soup, attr_dict, get_container=True)
-
+        containers = None
+        try:
+            containers = self.getContent(soup, attr_dict, get_container=True)
+        except:
+            pass
+        
         if 'crawlContainer2' in self.providerConfig:
             attr_dict = self.getAttr(self.providerConfig['crawlContainer2'])
-            containers2 = self.getContent(soup, attr_dict, get_container=True)
-            if containers2 is not None:
+            containers2 = None
+            try:
+                containers2 = self.getContent(soup, attr_dict, get_container=True)
+            except:
+                pass
+            if containers2 is not None and containers is not None:
                 containers = containers + containers2
+            if containers2 is not None and containers is None:
+                containers = containers2
 
-        print(len(containers))
+        # print(url)
+        # log_path = os.path.join(self.base_path, 'logs/test.html')
+        # with open(log_path, 'w') as file:
+        #     file.write(page_content)
+        # print(len(containers))
+
         if containers is None:
             print('containers is None')
             self.blocked = True
@@ -84,14 +94,16 @@ class Scraper():
                 if 'num_listings' in self.providerConfig:
                     if type(containers) == dict:
                         found_listings = int(self.getJsonResult(containers, self.providerConfig['num_listings']))
-                        containers = self.getJsonResult(containers, self.providerConfig['jsonContainer'])
                     else:
                         attr_dict = self.getAttr(self.providerConfig['num_listings'])
                         found_listings_num = self.stringToNumber(self.getContent(soup, attr_dict), self.languageId)
                         found_listings_num = re.sub('[^0-9]','', found_listings_num)
                         found_listings = int(found_listings_num)
-                
-                listings_per_page = len(containers)
+                listings_per_page = 1
+                if type(containers) == dict:
+                    listings_per_page = len(self.getJsonResult(containers, self.providerConfig['jsonContainer']))
+                else:
+                    listings_per_page = len(containers)
                 if 'listings_per_page' in self.providerConfig:
                     if self.providerConfig['listings_per_page'] != '':
                         try:
@@ -105,7 +117,11 @@ class Scraper():
                         except:
                             raise Exception('Parameter "maxPageResults" of config ' + self.providerConfig['provider'] + ' must be a number')
                 self.listings_per_page = listings_per_page
-                self.maxPageNum  = str(math.ceil(int(found_listings) / int(listings_per_page)))
+                if 'maxPageNum' in self.providerConfig:
+                    if type(containers) == dict:
+                        self.maxPageNum = int(self.getJsonResult(containers, self.providerConfig['maxPageNum']))
+                else:
+                    self.maxPageNum  = str(math.ceil(int(found_listings) / int(listings_per_page)))
                 return None
             else:
                 if type(containers) == dict:
@@ -124,14 +140,16 @@ class Scraper():
                 listing[key] = ''
 
             listing['provider'] = self.providerConfig['provider']
-            listing['type'] = self.house_type
             listing['active'] = '1'
             
             for key in self.providerConfig['crawlFields'].keys():
                 result = None
                 if type(con) == dict:
-                    if self.providerConfig['crawlFields'][key] in con:
-                        result = str(con[self.providerConfig['crawlFields'][key]])
+                    if not '.' in self.providerConfig['crawlFields'][key]:
+                        if self.providerConfig['crawlFields'][key] in con:
+                            result = con[self.providerConfig['crawlFields'][key]]
+                    else:
+                        result = self.getJsonResult(con, self.providerConfig['crawlFields'][key])
                 else:
                     attr_dict = self.getAttr(self.providerConfig['crawlFields'][key])
                     try:
@@ -139,10 +157,16 @@ class Scraper():
                     except:
                         pass
                 if result is not None:
-                    listing[key] = replaceChrs(result)
+                    if type(result) == str:
+                        listing[key] = replaceChrs(result)
+                    else:
+                        listing[key] = result
                 else:
                     listing[key] = ''
             
+            if not 'type' in listing:
+                listing['type'] = self.house_type
+
             if listing['in_db_since'] == '':
                 listing['in_db_since'] = str(datetime.datetime.now().strftime("%Y-%m-%d"))
 
