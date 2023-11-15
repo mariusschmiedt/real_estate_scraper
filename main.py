@@ -78,7 +78,7 @@ def main_control(provider_name, search_type, maxPageNum = None):
     else:
         return 'Success'
 
-provider_name = 'bayut_uae'
+provider_name = 'propertyfinder_uae'
 search_type = 'apartement_buy'
 maxPageNum = 2
 

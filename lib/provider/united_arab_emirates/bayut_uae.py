@@ -19,7 +19,6 @@ class provider():
                 "title": 'mainEntity.name',
                 "url": 'mainEntity.url',
                 "address_detected": 'mainEntity.geo',
-                "type": 'mainEntity.@type'
             },
             "num_listings": 'numberOfItems',
             "normalize": self.normalize,
@@ -64,12 +63,6 @@ class provider():
         else:
             o['price'] = ''
 
-        if 'type' in o:
-            if type(o['type']) == list:
-                o['type'] = o['type'][-1].lower()
-                if 'residence' == o['type']:
-                    o['type'] = 'apartment'
-
         o['size_unit'] = getSizeUnit(o['size_unit'])
 
         o['size'] = o['size'].replace(',', '')
@@ -79,6 +72,10 @@ class provider():
             o['size_unit'] = 'm^2'
 
         o['rooms'] = o['rooms'].replace(',', '')
+        try:
+            float(o['rooms'])
+        except:
+            o['rooms'] = '1'
 
         address = o['address_detected']
 

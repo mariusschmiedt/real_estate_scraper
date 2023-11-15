@@ -7,21 +7,17 @@ def getJob(provider_name, search_type, base_path):
 
     house_type = None
     table_name = None
-    if search_type == 'apartement_rent':
-        house_type = 'apartment'
+    if search_type.endswith('rent'):
         table_name = 'rentals'
-    if search_type == 'house_rent':
-        house_type = 'house'
-        table_name = 'rentals'
-    if search_type == 'apartement_buy':
-        house_type = 'apartment'
+    if search_type.endswith('buy'):
         table_name = 'sales'
-    if search_type == 'house_buy':
+    
+    house_type = search_type.replace('_rent', '').replace('_buy', '')
+
+    if house_type == 'townhouse' or house_type == 'bungalow':
         house_type = 'house'
-        table_name = 'sales'
-    if search_type == 'apartement_building_rent':
+    if house_type == 'duplex_buy' or house_type == 'floor' or house_type == 'half_floor' or house_type == 'bulk_unit':
         house_type = 'apartement_building'
-        table_name = 'sales'
     
     if house_type is None or table_name is None:
         raise Exception('Job search criteria not defined correctly.')

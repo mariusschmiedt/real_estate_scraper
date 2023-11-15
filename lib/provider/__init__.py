@@ -18,6 +18,7 @@ from .austria.wohnnet_at import provider as wohnnet_at
 from .austria.immodirekt_at import provider as immodirekt_at
 from .france.leboncoin_fr import provider as leboncoin_fr
 from .united_arab_emirates.bayut_uae import provider as bayut_uae
+from .united_arab_emirates.propertyfinder_uae import provider as propertyfinder_uae
 
 def getProvider(provider):
     if provider == 'immoswp_de':
@@ -60,3 +61,5 @@ def getProvider(provider):
         return leboncoin_fr()
     if provider == 'bayut_uae':
         return bayut_uae()
+    if provider == 'propertyfinder_uae':
+        return propertyfinder_uae()

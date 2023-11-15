@@ -9,15 +9,14 @@ import html5lib
 import locale
 from scrapingant_client import ScrapingAntClient
 import random
-from ..utils import getAntConfig, getLanguageId, getDatabaseScheme, replaceChrs
+from ..utils import getAntConfig, getDatabaseScheme, replaceChrs
 from .requestDriver import makeDriver
 
 class Scraper():
-    def __init__(self, providerConfig, needScrapingAnt, base_path, country, house_type):
+    def __init__(self, providerConfig, needScrapingAnt, base_path, house_type):
         
         self.needScrapingAnt = needScrapingAnt
         self.providerConfig = providerConfig
-        self.languageId = getLanguageId(base_path, country)
         self.database_schemes = getDatabaseScheme(base_path)
         self.table_columns = self.database_schemes['listing_scheme']
         self.house_type = house_type
@@ -96,20 +95,24 @@ class Scraper():
                         found_listings = int(self.getJsonResult(containers, self.providerConfig['num_listings']))
                     else:
                         attr_dict = self.getAttr(self.providerConfig['num_listings'])
-                        found_listings_num = self.stringToNumber(self.getContent(soup, attr_dict), self.languageId)
+                        found_listings_num = self.getContent(soup, attr_dict).replace('.', '').replace(',', '').replace("'", '').replace("´", '').replace("`", '')
                         found_listings_num = re.sub('[^0-9]','', found_listings_num)
                         found_listings = int(found_listings_num)
                 listings_per_page = 1
                 if type(containers) == dict:
-                    listings_per_page = len(self.getJsonResult(containers, self.providerConfig['jsonContainer']))
+                    if 'listings_per_page' in self.providerConfig:
+                        listings_per_page = int(self.getJsonResult(containers, self.providerConfig['listings_per_page']))
+                    else:
+                        listings_per_page = len(self.getJsonResult(containers, self.providerConfig['jsonContainer']))
                 else:
-                    listings_per_page = len(containers)
-                if 'listings_per_page' in self.providerConfig:
-                    if self.providerConfig['listings_per_page'] != '':
-                        try:
-                            listings_per_page = int(self.providerConfig['listings_per_page'])
-                        except:
-                            raise Exception('Parameter "listings_per_page" of config ' + self.providerConfig['provider'] + ' must be a number')
+                    if 'listings_per_page' in self.providerConfig:
+                        if self.providerConfig['listings_per_page'] != '':
+                            try:
+                                listings_per_page = int(self.providerConfig['listings_per_page'])
+                            except:
+                                raise Exception('Parameter "listings_per_page" of config ' + self.providerConfig['provider'] + ' must be a number')
+                    else:
+                        listings_per_page = len(containers)
                 if 'maxPageResults' in self.providerConfig:
                     if self.providerConfig['maxPageResults'] != '':
                         try:
@@ -328,17 +331,3 @@ class Scraper():
             else:
                 raise Exception('Dictionary key "' + key + '" is not part of the json result of ' + self.providerConfig['provider'] + '.')
         return container
-    
-    def stringToNumber(self, value, languageId):
-        value = value.replace("'", '')
-        value = value.replace("´", '')
-        value = value.replace("`", '')
-        if languageId.startswith('de') or languageId.startswith('es') or languageId.startswith('it') or languageId.startswith('fr'):
-            value = value.replace('.', '')
-            value = value.replace(' ', '')
-            value = value.replace(',', '.')
-        elif languageId.startswith('en'):
-            value = value.replace(',', '')
-            value = value.replace(' ', '')
-        
-        return value

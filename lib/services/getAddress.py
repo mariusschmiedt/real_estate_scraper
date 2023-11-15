@@ -25,6 +25,12 @@ def getAddress(listing, country, sql):
                 lat = a.replace('lat:', '').strip()
             if 'lon:' in a:
                 lon = a.replace('lon:', '').strip()
+        if lat != '' and lon != '':
+            address_sub = address
+            address_sub = address_sub.replace('lat: ' + str(lat) + ',', '').strip()
+            address_sub = address_sub.replace('lon: ' + str(lon) + ',', '').strip()
+            if address_sub != '':
+                address = address_sub
     
     coord_from_address = False
     if lat != '' and lon != '':
@@ -140,10 +146,6 @@ def getAddress(listing, country, sql):
             if country == 'United Arab Emirates':
                 if city == '' and state != '':
                     city = state.replace('Emirate', '').strip()
-        country = country.replace("'", "''")
-        state = state.replace("'", "''")
-        city = city.replace("'", "''")
-        district = district.replace("'", "''")
         # update database if something is new
         if country != '' and state != '' and city != '' and (postalcode != '' or coord_from_address):
             # check if with the new information an address id can be found
@@ -197,7 +199,12 @@ def getLocationInfromation(location):
                 state = city
             if 'suburb' in location.raw['address']:
                 district = location.raw['address']['suburb']
+            if 'residential' in location.raw['address']:
+                district = location.raw['address']['residential']
             if 'country' in location.raw['address']:
                 country = location.raw['address']['country']
-    
+    country = country.replace("'", "''")
+    state = state.replace("'", "''")
+    city = city.replace("'", "''")
+    district = district.replace("'", "''")
     return country, postalcode, state, city, district

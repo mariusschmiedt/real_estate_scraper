@@ -38,7 +38,7 @@ class PReEsCr():
         # determine if a scraping ant is required
         self.ant_required = needScrapingAnt(base_path, self._providerConfig['provider'])
         # initialize scraper
-        self.scraper = Scraper(self._providerConfig, self.ant_required, self._base_path, country, house_type)
+        self.scraper = Scraper(self._providerConfig, self.ant_required, self._base_path, house_type)
     
     def exe(self, url):
         # scrape listings

@@ -69,8 +69,6 @@ class provider():
         # remove time from date string
         if o['in_db_since'] != '':
             o['in_db_since'] = o['in_db_since'].split('T')[0]
-        else:
-            o['in_db_since'] = ''
         
         # set size unit
         o['size_unit'] = 'm^2'

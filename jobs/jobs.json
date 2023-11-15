@@ -148,7 +148,7 @@
       "url": "https://www.homegate.ch/mieten/haus/land-schweiz/trefferliste",
       "country": "Switzerland"
     },
-    "apartement_building_rent": {
+    "apartement_building_buy": {
       "url": "https://www.homegate.ch/kaufen/mehrfamilienhaus/land-schweiz/trefferliste",
       "country": "Switzerland"
     }
@@ -191,20 +191,110 @@
   },
   "bayut_uae": {
     "apartement_buy": {
-      "url": "https://www.bayut.com/to-rent/property/uae/?rent_frequency=any",
-      "country": "France"
+      "url": "https://www.bayut.com/for-sale/apartments/uae/",
+      "country": "United Arab Emirates"
+    },
+    "villa_buy": {
+      "url": "https://www.bayut.com/for-sale/villas/uae/",
+      "country": "United Arab Emirates"
+    },
+    "townhouse_buy": {
+      "url": "https://www.bayut.com/for-sale/townhouses/uae/",
+      "country": "United Arab Emirates"
+    },
+    "penthouse_buy": {
+      "url": "https://www.bayut.com/for-sale/penthouse/uae/",
+      "country": "United Arab Emirates"
+    },
+    "villa_compound_buy": {
+      "url": "https://www.bayut.com/for-sale/villa-compound/uae/",
+      "country": "United Arab Emirates"
+    },
+    "floor_buy": {
+      "url": "https://www.bayut.com/for-sale/residential-floors/uae/",
+      "country": "United Arab Emirates"
+    },
+    "apartement_building_buy": {
+      "url": "https://www.bayut.com/for-sale/residential-building/uae/",
+      "country": "United Arab Emirates"
     },
     "apartement_rent": {
-      "url": "https://www.leboncoin.fr/recherche?category=10&real_estate_type=2",
-      "country": "France"
+      "url": "https://www.bayut.com/to-rent/apartments/uae/",
+      "country": "United Arab Emirates"
     },
-    "house_buy": {
-      "url": "https://www.leboncoin.fr/recherche?category=9&real_estate_type=1",
-      "country": "France"
+    "villa_rent": {
+      "url": "https://www.bayut.com/to-rent/villas/uae/",
+      "country": "United Arab Emirates"
     },
-    "house_rent": {
-      "url": "https://www.leboncoin.fr/recherche?category=10&real_estate_type=1",
-      "country": "France"
+    "townhouse_rent": {
+      "url": "https://www.bayut.com/to-rent/townhouses/uae/",
+      "country": "United Arab Emirates"
+    },
+    "penthouse_rent": {
+      "url": "https://www.bayut.com/to-rent/penthouse/uae/",
+      "country": "United Arab Emirates"
+    }
+  },
+  "propertyfinder_uae": {
+    "apartement_buy": {
+      "url": "https://www.propertyfinder.ae/en/search?c=1&t=1",
+      "country": "United Arab Emirates"
+    },
+    "villa_buy": {
+      "url": "https://www.propertyfinder.ae/en/search?c=1&t=35",
+      "country": "United Arab Emirates"
+    },
+    "townhouse_buy": {
+      "url": "https://www.propertyfinder.ae/en/search?c=1&t=22",
+      "country": "United Arab Emirates"
+    },
+    "penthouse_buy": {
+      "url": "https://www.propertyfinder.ae/en/search?c=1&t=20",
+      "country": "United Arab Emirates"
+    },
+    "villa_compound_buy": {
+      "url": "https://www.propertyfinder.ae/en/search?c=1&t=42",
+      "country": "United Arab Emirates"
+    },
+    "duplex_buy": {
+      "url": "https://www.propertyfinder.ae/en/search?c=1&t=24",
+      "country": "United Arab Emirates"
+    },
+    "floor_buy": {
+      "url": "https://www.propertyfinder.ae/en/search?c=1&t=18",
+      "country": "United Arab Emirates"
+    },
+    "half_floor_buy": {
+      "url": "https://www.propertyfinder.ae/en/search?c=1&t=29",
+      "country": "United Arab Emirates"
+    },
+    "apartement_building_buy": {
+      "url": "https://www.propertyfinder.ae/en/search?c=1&t=10",
+      "country": "United Arab Emirates"
+    },
+    "bulk_unit_buy": {
+      "url": "https://www.propertyfinder.ae/en/search?c=1&t=30",
+      "country": "United Arab Emirates"
+    },
+    "bungalow_buy": {
+      "url": "https://www.propertyfinder.ae/en/search?c=1&t=31",
+      "country": "United Arab Emirates"
+    },
+    "apartement_rent": {
+      "url": "https://www.propertyfinder.ae/en/search?c=2&t=1",
+      "country": "United Arab Emirates"
+    },
+    "villa_rent": {
+      "url": "https://www.propertyfinder.ae/en/search?c=2&t=35",
+      "country": "United Arab Emirates"
+    },
+    "townhouse_rent": {
+      "url": "https://www.propertyfinder.ae/en/search?c=2&t=22",
+      "country": "United Arab Emirates"
+    },
+    "penthouse_rent": {
+      "url": "https://www.propertyfinder.ae/en/search?c=2&t=20",
+      "country": "United Arab Emirates"
     }
   }
 }
