@@ -1,6 +1,6 @@
-# fredy_for_python
+# real_estate_scraper
 
-Fredy for python is based on the implementation of the real estate scraper: https://github.com/orangecoding/fredy
+Real Estate Scraper is based on the implementation of the real estate scraper: https://github.com/orangecoding/fredy
 It is scraping different real estate platforms to retreive real estates.
 - immoscout
 - immoswp
